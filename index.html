@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,6 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23007bff'/%3E%3Cpath d='M50,25 L75,40 L75,70 L50,85 L25,70 L25,40 Z' fill='none' stroke='%23fff' stroke-width='5'/%3E%3Cpath d='M35,50 L50,60 L65,50' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
 
     <style>
-        /* CSS Reset and Global Styles */
         :root {
             --primary-color: #007bff;
             --secondary-color: #6c757d;
@@ -31,366 +30,76 @@
             --border-radius: 8px;
             --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font-family);
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .app-header {
-            background-color: var(--surface-color);
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .app-header h1 {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .add-case-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-
-        .add-case-btn:hover {
-            background-color: #0056b3;
-        }
-
-        /* Main Content */
-        main {
-            padding: 1.5rem;
-        }
-
-        #case-list {
-            display: grid;
-            gap: 1rem;
-        }
-
-        /* Case Card */
-        .case-card {
-            background-color: var(--surface-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 1.25rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .case-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .case-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .case-card-header h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-right: 1rem;
-        }
-        
-        .receipt-number {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9rem;
-            color: var(--text-muted-color);
-        }
-
-        .case-card-body p {
-            font-size: 0.95rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .case-card-footer {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            color: var(--text-muted-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 0.25em 0.6em;
-            font-size: 0.9em;
-            font-weight: 600;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.25rem;
-            color: #fff;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-family); background-color: var(--background-color); color: var(--text-color); line-height: 1.6; }
+        .app-header { background-color: var(--surface-color); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .app-header h1 { font-size: 1.5rem; color: var(--primary-color); }
+        .add-case-btn { background-color: var(--primary-color); color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
+        .add-case-btn:hover { background-color: #0056b3; }
+        main { padding: 1.5rem; }
+        #case-list { display: grid; gap: 1rem; }
+        .case-card { background-color: var(--surface-color); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 1.25rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+        .case-card:hover { transform: translateY(-5px); box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1); }
+        .case-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .case-card-header h2 { font-size: 1.1rem; font-weight: 600; margin-right: 1rem; }
+        .receipt-number { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: var(--text-muted-color); }
+        .case-card-body p { font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .case-card-footer { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted-color); display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { display: inline-block; padding: 0.25em 0.6em; font-size: 0.9em; font-weight: 600; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; color: #fff; }
         .status-badge.status-approved { background-color: var(--success-color); }
         .status-badge.status-processing { background-color: var(--primary-color); }
         .status-badge.status-rfe { background-color: var(--warning-color); color: var(--text-color); }
         .status-badge.status-denied { background-color: var(--danger-color); }
         .status-badge.status-unknown { background-color: var(--secondary-color); }
-
-        .delete-case-btn {
-            background: none;
-            border: none;
-            color: var(--danger-color);
-            cursor: pointer;
-            padding: 5px;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .delete-case-btn:hover {
-            opacity: 1;
-        }
-        
-        /* Skeleton Loader */
-        .skeleton {
-            animation: skeleton-loading 1s linear infinite alternate;
-        }
-        @keyframes skeleton-loading {
-            0% { background-color: hsl(200, 20%, 80%); }
-            100% { background-color: hsl(200, 20%, 95%); }
-        }
-        .skeleton-text {
-            width: 100%;
-            height: 0.8rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.25rem;
-        }
-        .skeleton-text:last-child { margin-bottom: 0; }
+        .delete-case-btn { background: none; border: none; color: var(--danger-color); cursor: pointer; padding: 5px; opacity: 0.7; transition: opacity 0.2s; }
+        .delete-case-btn:hover { opacity: 1; }
+        .skeleton { animation: skeleton-loading 1s linear infinite alternate; }
+        @keyframes skeleton-loading { 0% { background-color: hsl(200, 20%, 80%); } 100% { background-color: hsl(200, 20%, 95%); } }
+        .skeleton-text { width: 100%; height: 0.8rem; margin-bottom: 0.5rem; border-radius: 0.25rem; }
         .skeleton-text.w-75 { width: 75%; }
         .skeleton-text.w-50 { width: 50%; }
-
-        /* Empty State */
-        #empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            background-color: var(--surface-color);
-            border-radius: var(--border-radius);
-            border: 2px dashed var(--border-color);
-        }
-
-        #empty-state h3 {
-            margin-bottom: 0.5rem;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background-color: var(--background-color);
-            margin: 10% auto;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-            animation: slideIn 0.3s;
-        }
-        
+        #empty-state { text-align: center; padding: 3rem 1rem; background-color: var(--surface-color); border-radius: var(--border-radius); border: 2px dashed var(--border-color); }
+        #empty-state h3 { margin-bottom: 0.5rem; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.3s; }
+        .modal-content { background-color: var(--background-color); margin: 10% auto; padding: 2rem; border-radius: var(--border-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 90%; max-width: 600px; position: relative; animation: slideIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: var(--text-muted-color);
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .modal h2 {
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-        }
-        
-        .modal-form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .modal-form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        
-        .modal-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-        }
-        
-        .modal-button {
-            width: 100%;
-            padding: 0.85rem;
-            border: none;
-            border-radius: var(--border-radius);
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .modal-button:hover {
-            background-color: #0056b3;
-        }
-
-        #error-message {
-            color: var(--danger-color);
-            margin-top: 1rem;
-            display: none;
-        }
-
-        /* Detail Modal Specifics */
-        .detail-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1.5rem;
-        }
-
-        .tab-button {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-muted-color);
-            border-bottom: 3px solid transparent;
-            margin-bottom: -1px;
-        }
-
-        .tab-button.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-        
-        #detail-content-list {
-            list-style: none;
-        }
-        
-        #detail-content-list li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        #detail-content-list li:last-child {
-            border-bottom: none;
-        }
-
-        #detail-content-list strong {
-            color: var(--text-color);
-            margin-right: 1rem;
-        }
-        
-        #detail-content-list span {
-            text-align: right;
-            color: var(--text-muted-color);
-        }
-
-        #json-response {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.85rem;
-        }
+        .close-btn { position: absolute; top: 1rem; right: 1rem; color: var(--text-muted-color); font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal h2 { margin-bottom: 1.5rem; color: var(--primary-color); }
+        .modal-form-group { margin-bottom: 1rem; }
+        .modal-form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .modal-input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); font-size: 1rem; }
+        .modal-button { width: 100%; padding: 0.85rem; border: none; border-radius: var(--border-radius); background-color: var(--primary-color); color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
+        .modal-button:hover:not(:disabled) { background-color: #0056b3; }
+        .modal-button:disabled { background-color: var(--secondary-color); cursor: not-allowed; }
+        #error-message { color: var(--danger-color); margin-top: 1rem; text-align: center; display: none; }
+        .detail-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+        .tab-button { padding: 0.75rem 1rem; cursor: pointer; border: none; background-color: transparent; font-size: 1rem; font-weight: 600; color: var(--text-muted-color); border-bottom: 3px solid transparent; margin-bottom: -1px; }
+        .tab-button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #detail-content-list { list-style: none; }
+        #detail-content-list li { padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); display: flex; flex-wrap: wrap; justify-content: space-between; }
+        #detail-content-list li:last-child { border-bottom: none; }
+        #detail-content-list strong { color: var(--text-color); margin-right: 1rem; }
+        #detail-content-list span { text-align: right; color: var(--text-muted-color); word-break: break-word; }
+        #json-response { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1rem; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-        <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </symbol>
-        <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-        </symbol>
-    </svg>
-
     <header class="app-header">
         <h1>Case Tracker</h1>
-        <button class="add-case-btn" id="addCaseBtn" aria-label="Add new case">+</button>
+        <button class="add-case-btn" id="addCaseBtn" aria-label="Add new case">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
     </header>
 
     <main>
-        <div id="case-list">
-            </div>
+        <div id="case-list"></div>
         <div id="empty-state" style="display: none;">
             <h3>No cases yet</h3>
             <p>Tap the '+' button to add your first case.</p>
@@ -399,34 +108,30 @@
 
     <div id="addCaseModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="closeAddModal">&times;</span>
+            <span class="close-btn" data-modal-id="addCaseModal">&times;</span>
             <h2>Add New Case</h2>
             <form id="addCaseForm">
                 <div class="modal-form-group">
                     <label for="receiptNumberInput">USCIS Receipt Number</label>
                     <input type="text" id="receiptNumberInput" class="modal-input" placeholder="e.g., IOE0912345678" required>
                 </div>
-                <button type="submit" class="modal-button">Add Case</button>
-                <p id="error-message">Could not find case. Please check the receipt number and try again.</p>
+                <button type="submit" id="addCaseSubmitBtn" class="modal-button">Add Case</button>
+                <p id="error-message">Could not find case. Please check the receipt number.</p>
             </form>
         </div>
     </div>
     
     <div id="detailModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="closeDetailModal">&times;</span>
+            <span class="close-btn" data-modal-id="detailModal">&times;</span>
             <h2 id="detail-modal-title">Case Details</h2>
-
             <div class="detail-tabs">
                 <button class="tab-button active" data-tab="details">Details</button>
                 <button class="tab-button" data-tab="json">API Response</button>
             </div>
-
             <div id="tab-content-details" class="tab-content active">
-                <ul id="detail-content-list">
-                    </ul>
+                <ul id="detail-content-list"></ul>
             </div>
-
             <div id="tab-content-json" class="tab-content">
                 <pre id="json-response"></pre>
             </div>
@@ -436,60 +141,41 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const caseList = document.getElementById('case-list');
-            const emptyState = document.getElementById('empty-state');
-            const addCaseBtn = document.getElementById('addCaseBtn');
-            const addCaseModal = document.getElementById('addCaseModal');
-            const closeAddModal = document.getElementById('closeAddModal');
-            const addCaseForm = document.getElementById('addCaseForm');
-            const receiptNumberInput = document.getElementById('receiptNumberInput');
-            const errorMessage = document.getElementById('error-message');
-            
-            const detailModal = document.getElementById('detailModal');
-            const closeDetailModal = document.getElementById('closeDetailModal');
-            const detailModalTitle = document.getElementById('detail-modal-title');
-            const detailContentList = document.getElementById('detail-content-list');
-            const jsonResponse = document.getElementById('json-response');
+            const elements = {
+                caseList: document.getElementById('case-list'),
+                emptyState: document.getElementById('empty-state'),
+                addCaseBtn: document.getElementById('addCaseBtn'),
+                addCaseModal: document.getElementById('addCaseModal'),
+                addCaseForm: document.getElementById('addCaseForm'),
+                receiptNumberInput: document.getElementById('receiptNumberInput'),
+                addCaseSubmitBtn: document.getElementById('addCaseSubmitBtn'),
+                errorMessage: document.getElementById('error-message'),
+                detailModal: document.getElementById('detailModal'),
+                detailModalTitle: document.getElementById('detail-modal-title'),
+                detailContentList: document.getElementById('detail-content-list'),
+                jsonResponse: document.getElementById('json-response'),
+            };
 
             let cases = [];
 
-            // --- MAPPINGS ---
             const EVENT_CODE_MAP = {
-                'IAF': 'Case Was Received',
-                'FTA0': 'Biometrics Taken',
-                'NFCB': 'Biometrics Appointment Was Scheduled',
-                // Add more known codes here
+                'IAF': 'Case Was Received', 'FTA0': 'Biometrics Taken', 'NFCB': 'Biometrics Appointment Was Scheduled',
             };
-
             const ACTION_TYPE_MAP = {
-                'Appointment Scheduled': 'Biometrics Appointment Scheduled',
-                'Courtesy Letter': 'Courtesy Letter Was Mailed',
-                // Add more known action types here
+                'Appointment Scheduled': 'Biometrics Appointment Scheduled', 'Courtesy Letter': 'Courtesy Letter Was Mailed',
             };
 
-            // --- LOCAL STORAGE ---
-            const getCasesFromStorage = () => {
-                return JSON.parse(localStorage.getItem('uscisCases') || '[]');
-            };
+            const getCasesFromStorage = () => JSON.parse(localStorage.getItem('uscisCases') || '[]');
+            const saveCasesToStorage = (receiptNumbers) => localStorage.setItem('uscisCases', JSON.stringify(receiptNumbers));
 
-            const saveCasesToStorage = (receiptNumbers) => {
-                localStorage.setItem('uscisCases', JSON.stringify(receiptNumbers));
-            };
-
-            // --- API & DATA HANDLING ---
             const fetchCaseData = async (receiptNumber) => {
-                // Using a CORS proxy to bypass browser restrictions on the USCIS API
-                // This is necessary for a static frontend-only application
                 const PROXY_URL = 'https://api.allorigins.win/raw?url=';
                 const API_URL = `https://my.uscis.gov/account/case-service/api/cases/${receiptNumber}`;
-                
                 try {
                     const response = await fetch(`${PROXY_URL}${encodeURIComponent(API_URL)}`);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
-                    
                     if (data.error || !data.data) throw new Error(data.error || 'Invalid data format');
-                    
                     return data.data;
                 } catch (error) {
                     console.error('Fetch error for ' + receiptNumber + ':', error);
@@ -499,24 +185,19 @@
 
             const processAndAddCase = async (receiptNumber, isInitialLoad = false) => {
                 const upperReceiptNumber = receiptNumber.toUpperCase();
-                
-                // Prevent duplicates
                 if (cases.some(c => c.receiptNumber === upperReceiptNumber)) {
-                    if(!isInitialLoad) alert('This case has already been added.');
-                    return;
+                    if (!isInitialLoad) alert('This case has already been added.');
+                    return false;
                 }
-                
                 const skeletonCard = createSkeletonCard(upperReceiptNumber);
-                if (emptyState.style.display !== 'none') {
-                   emptyState.style.display = 'none';
-                }
-                caseList.insertAdjacentElement('afterbegin', skeletonCard);
-                
+                if (elements.emptyState.style.display !== 'none') elements.emptyState.style.display = 'none';
+                elements.caseList.insertAdjacentElement('afterbegin', skeletonCard);
+
                 const data = await fetchCaseData(upperReceiptNumber);
                 skeletonCard.remove();
-                
+
                 if (data) {
-                    cases.unshift(data); // Add to the beginning of the array
+                    cases.unshift(data);
                     if (!isInitialLoad) {
                         const currentCases = getCasesFromStorage();
                         saveCasesToStorage([upperReceiptNumber, ...currentCases]);
@@ -525,26 +206,22 @@
                     return true;
                 } else {
                     if (!isInitialLoad) {
-                        errorMessage.style.display = 'block';
+                        elements.errorMessage.style.display = 'block';
                     } else {
-                        // For initial load, create an error card
-                        caseList.insertAdjacentHTML('beforeend', createErrorCard(upperReceiptNumber));
+                        elements.caseList.insertAdjacentHTML('beforeend', createErrorCard(upperReceiptNumber));
+                        addCardEventListeners();
                     }
                     return false;
                 }
             };
             
-            // --- UI RENDERING ---
             const renderCaseList = () => {
-                caseList.innerHTML = '';
+                elements.caseList.innerHTML = '';
                 if (cases.length === 0) {
-                    emptyState.style.display = 'block';
+                    elements.emptyState.style.display = 'block';
                 } else {
-                    emptyState.style.display = 'none';
-                    cases.forEach(caseData => {
-                        const card = createCaseCard(caseData);
-                        caseList.innerHTML += card;
-                    });
+                    elements.emptyState.style.display = 'none';
+                    cases.forEach(caseData => elements.caseList.innerHTML += createCaseCard(caseData));
                 }
                 addCardEventListeners();
             };
@@ -552,7 +229,6 @@
             const createCaseCard = (data) => {
                 const { applicantName, receiptNumber, formType, formName, updatedAtTimestamp } = data;
                 const { text: statusText, color: statusColor } = getLatestStatus(data);
-                
                 return `
                     <div class="case-card" data-receipt="${receiptNumber}">
                         <div class="case-card-header">
@@ -562,231 +238,168 @@
                             </div>
                             <span class="status-badge ${statusColor}">${statusText}</span>
                         </div>
-                        <div class="case-card-body">
-                            <p>${formType}: ${formName}</p>
-                        </div>
+                        <div class="case-card-body"><p>${formType}: ${formName}</p></div>
                         <div class="case-card-footer">
                             <span>Last Updated: ${formatDate(updatedAtTimestamp)}</span>
-                             <button class="delete-case-btn" data-receipt="${receiptNumber}" aria-label="Delete case">
-                                <svg width="20" height="20"><use href="#icon-trash"></use></svg>
+                            <button class="delete-case-btn" data-receipt="${receiptNumber}" aria-label="Delete case">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
                             </button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             };
 
             const createSkeletonCard = (receiptNumber) => {
                 const card = document.createElement('div');
                 card.className = 'case-card';
-                card.innerHTML = `
-                    <div class="case-card-header">
-                        <div>
-                            <div class="skeleton skeleton-text w-75"></div>
-                            <div class="skeleton skeleton-text w-50"></div>
-                        </div>
-                        <div class="skeleton skeleton-text" style="width: 80px; height: 24px;"></div>
-                    </div>
-                    <div class="case-card-body">
-                        <div class="skeleton skeleton-text"></div>
-                    </div>
-                    <div class="case-card-footer">
-                        <div class="skeleton skeleton-text w-50"></div>
-                    </div>
-                `;
+                card.innerHTML = `<div class="case-card-header"><div><div class="skeleton skeleton-text w-75"></div><div class="skeleton skeleton-text w-50"></div></div><div class="skeleton skeleton-text" style="width: 80px; height: 24px;"></div></div><div class="case-card-body"><div class="skeleton skeleton-text"></div></div><div class="case-card-footer"><div class="skeleton skeleton-text w-50"></div></div>`;
                 return card;
             };
 
-            const createErrorCard = (receiptNumber) => {
-                return `
-                    <div class="case-card" data-receipt="${receiptNumber}">
-                         <div class="case-card-header">
-                            <div>
-                                <h2>Error Fetching Case</h2>
-                                <p class="receipt-number">${receiptNumber}</p>
-                            </div>
-                             <span class="status-badge status-denied">Failed</span>
-                        </div>
-                        <div class="case-card-body">
-                            <p>Could not retrieve data. The service might be down or the receipt number is invalid.</p>
-                        </div>
-                        <div class="case-card-footer">
-                            <span>Last attempt: ${new Date().toLocaleDateString()}</span>
-                             <button class="delete-case-btn" data-receipt="${receiptNumber}" aria-label="Delete case">
-                                <svg width="20" height="20"><use href="#icon-trash"></use></svg>
-                            </button>
-                        </div>
-                    </div>`;
-            };
+            const createErrorCard = (receiptNumber) => `
+                <div class="case-card" data-receipt="${receiptNumber}">
+                    <div class="case-card-header">
+                        <div><h2>Error Fetching Case</h2><p class="receipt-number">${receiptNumber}</p></div>
+                        <span class="status-badge status-denied">Failed</span>
+                    </div>
+                    <div class="case-card-body"><p>Could not retrieve data. The service might be down or the receipt number is invalid.</p></div>
+                    <div class="case-card-footer">
+                        <span>Last attempt: ${new Date().toLocaleDateString()}</span>
+                        <button class="delete-case-btn" data-receipt="${receiptNumber}" aria-label="Delete case">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </div>`;
             
             const populateDetailModal = (receiptNumber) => {
                 const data = cases.find(c => c.receiptNumber === receiptNumber);
                 if (!data) return;
-
-                detailModalTitle.textContent = `${data.formType}: ${data.receiptNumber}`;
-                
+                elements.detailModalTitle.textContent = `${data.formType}: ${data.receiptNumber}`;
+                const { text: statusText } = getLatestStatus(data);
                 const details = [
+                    { label: 'Latest Status', value: statusText },
                     { label: 'Applicant', value: data.applicantName || 'N/A' },
                     { label: 'Form', value: `${data.formType} - ${data.formName}` },
                     { label: 'Submission Date', value: formatDate(data.submissionDate) },
                     { label: 'Last Updated', value: formatDateTime(data.updatedAtTimestamp) },
                     { label: 'Representative', value: data.representativeName || 'None' }
                 ];
-
-                const { text: statusText } = getLatestStatus(data);
-                details.unshift({ label: 'Latest Status', value: statusText });
-                
-                detailContentList.innerHTML = details.map(d => `
-                    <li><strong>${d.label}</strong> <span>${d.value}</span></li>
-                `).join('');
-
-                jsonResponse.textContent = JSON.stringify(data, null, 2);
-
-                // Show modal
-                detailModal.style.display = 'block';
+                elements.detailContentList.innerHTML = details.map(d => `<li><strong>${d.label}</strong> <span>${d.value}</span></li>`).join('');
+                elements.jsonResponse.textContent = JSON.stringify(data, null, 2);
+                elements.detailModal.style.display = 'block';
             };
 
-
-            // --- HELPER FUNCTIONS ---
             const getLatestStatus = (data) => {
                 let allUpdates = [];
-
-                if (data.events) {
-                    data.events.forEach(event => {
-                        allUpdates.push({
-                            date: new Date(event.eventTimestamp),
-                            text: EVENT_CODE_MAP[event.eventCode] || event.eventCode,
-                        });
-                    });
-                }
-                
-                if (data.notices) {
-                    data.notices.forEach(notice => {
-                         allUpdates.push({
-                            date: new Date(notice.generationDate),
-                            text: ACTION_TYPE_MAP[notice.actionType] || notice.actionType,
-                        });
-                    });
-                }
-
-                if (allUpdates.length === 0) {
-                     return { text: 'Unknown', color: 'status-unknown' };
-                }
-
+                if (data.events) data.events.forEach(e => allUpdates.push({ date: new Date(e.eventTimestamp), text: EVENT_CODE_MAP[e.eventCode] || e.eventCode }));
+                if (data.notices) data.notices.forEach(n => allUpdates.push({ date: new Date(n.generationDate), text: ACTION_TYPE_MAP[n.actionType] || n.actionType }));
+                if (allUpdates.length === 0) return { text: 'Unknown', color: 'status-unknown' };
                 allUpdates.sort((a, b) => b.date - a.date);
                 const latestText = allUpdates[0].text;
-
                 let color = 'status-processing';
                 const lowerText = latestText.toLowerCase();
                 if (lowerText.includes('approved') || lowerText.includes('card was produced')) color = 'status-approved';
                 if (lowerText.includes('denied') || lowerText.includes('rejected')) color = 'status-denied';
                 if (lowerText.includes('request for evidence')) color = 'status-rfe';
-
                 return { text: latestText, color: color };
             };
 
-            const formatDate = (dateString) => {
-                if (!dateString) return 'N/A';
-                const options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-                return new Date(dateString).toLocaleDateString('en-US', options);
-            };
-            
-            const formatDateTime = (dateString) => {
-                if (!dateString) return 'N/A';
-                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'UTC' };
-                return new Date(dateString).toLocaleDateString('en-US', options);
-            };
+            const formatDate = (ds) => ds ? new Date(ds).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : 'N/A';
+            const formatDateTime = (ds) => ds ? new Date(ds).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }) : 'N/A';
 
             const deleteCase = (receiptNumber) => {
                 if (!confirm(`Are you sure you want to remove case ${receiptNumber}?`)) return;
-
                 cases = cases.filter(c => c.receiptNumber !== receiptNumber);
-                const storedCases = getCasesFromStorage();
-                saveCasesToStorage(storedCases.filter(rn => rn !== receiptNumber));
+                saveCasesToStorage(cases.map(c => c.receiptNumber));
                 renderCaseList();
             };
-
-            // --- EVENT LISTENERS ---
-            const addCardEventListeners = () => {
-                document.querySelectorAll('.case-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        // Prevent opening detail view when delete button is clicked
-                        if (e.target.closest('.delete-case-btn')) return;
-                        const receipt = card.dataset.receipt;
-                        populateDetailModal(receipt);
-                    });
-                });
-
-                document.querySelectorAll('.delete-case-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Stop the click from propagating to the card
-                        const receipt = button.dataset.receipt;
-                        deleteCase(receipt);
-                    });
-                });
-            };
-
-            addCaseBtn.onclick = () => {
-                addCaseModal.style.display = 'block';
-                receiptNumberInput.focus();
-            };
-
-            closeAddModal.onclick = () => {
-                addCaseModal.style.display = 'none';
-                errorMessage.style.display = 'none';
-            };
             
-            closeDetailModal.onclick = () => {
-                detailModal.style.display = 'none';
+            const addCardEventListeners = () => {
+                elements.caseList.querySelectorAll('.case-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.delete-case-btn')) return;
+                        populateDetailModal(card.dataset.receipt);
+                    });
+                });
+                elements.caseList.querySelectorAll('.delete-case-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteCase(button.dataset.receipt);
+                    });
+                });
             };
 
-            window.onclick = (event) => {
-                if (event.target == addCaseModal) addCaseModal.style.display = 'none';
-                if (event.target == detailModal) detailModal.style.display = 'none';
-            };
+            const setupEventListeners = () => {
+                elements.addCaseBtn.addEventListener('click', () => {
+                    elements.addCaseModal.style.display = 'block';
+                    elements.receiptNumberInput.focus();
+                });
 
-            addCaseForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const receiptNumber = receiptNumberInput.value.trim();
-                if (receiptNumber) {
+                document.querySelectorAll('.close-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.getElementById(btn.dataset.modalId).style.display = 'none';
+                    });
+                });
+                
+                window.addEventListener('click', (event) => {
+                    if (event.target == elements.addCaseModal) elements.addCaseModal.style.display = 'none';
+                    if (event.target == elements.detailModal) elements.detailModal.style.display = 'none';
+                });
+
+                elements.addCaseForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const receiptNumber = elements.receiptNumberInput.value.trim();
+                    if (!receiptNumber) return;
+
+                    elements.addCaseSubmitBtn.disabled = true;
+                    elements.addCaseSubmitBtn.textContent = 'Adding...';
+                    elements.errorMessage.style.display = 'none';
+
                     const success = await processAndAddCase(receiptNumber);
                     if (success) {
-                        receiptNumberInput.value = '';
-                        addCaseModal.style.display = 'none';
-                        errorMessage.style.display = 'none';
+                        elements.receiptNumberInput.value = '';
+                        elements.addCaseModal.style.display = 'none';
                     }
-                }
-            });
-
-            // Detail Modal Tabs
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-                    button.classList.add('active');
-                    document.getElementById(`tab-content-${button.dataset.tab}`).classList.add('active');
+                    
+                    elements.addCaseSubmitBtn.disabled = false;
+                    elements.addCaseSubmitBtn.textContent = 'Add Case';
                 });
-            });
 
-            // --- INITIALIZATION ---
-            const initialize = () => {
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                        button.classList.add('active');
+                        document.getElementById(`tab-content-${button.dataset.tab}`).classList.add('active');
+                    });
+                });
+            };
+
+            const initialize = async () => {
                 const savedReceipts = getCasesFromStorage();
                 if (savedReceipts.length === 0) {
-                    emptyState.style.display = 'block';
+                    elements.emptyState.style.display = 'block';
                 } else {
-                    emptyState.style.display = 'none';
-                    // Fetch all cases in parallel
-                    const casePromises = savedReceipts.map(rn => processAndAddCase(rn, true));
-                    Promise.all(casePromises).then(() => {
-                        // All initial cases are processed, now render
-                        renderCaseList();
+                    elements.emptyState.style.display = 'none';
+                    const casePromises = savedReceipts.map(rn => fetchCaseData(rn));
+                    const results = await Promise.all(casePromises);
+                    results.forEach((data, index) => {
+                        if(data) {
+                            cases.push(data);
+                        } else {
+                            elements.caseList.insertAdjacentHTML('beforeend', createErrorCard(savedReceipts[index]));
+                        }
                     });
+                    renderCaseList();
                 }
             };
             
+            setupEventListeners();
             initialize();
         });
     </script>
 </body>
 </html>
-                                                                                                                 <button class="delete-case-bt
