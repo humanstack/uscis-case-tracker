@@ -25,7 +25,6 @@
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --border-radius: 12px;
             --box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
-            --pwa-banner-height: 80px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -38,9 +37,12 @@
         #case-list { display: grid; gap: 1.25rem; }
         .case-card { background-color: var(--surface-color); border-radius: var(--border-radius); box-shadow: var(--box-shadow); display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
         .case-card:hover { transform: translateY(-4px); box-shadow: 0 2px 3px 0 rgba(60,64,67,0.3), 0 6px 10px 4px rgba(60,64,67,0.15); }
-        .case-card-main { padding: 1rem 1.25rem; cursor: pointer; flex-grow: 1; }
+        .case-card-main { padding: 1.25rem; cursor: pointer; flex-grow: 1; }
         .case-card-main.unhydrated { filter: grayscale(80%); opacity: 0.8; }
-        .case-card-header h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-color); }
+        .card-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+        .card-top-row h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-color); }
+        .closed-badge { font-size: 0.75rem; font-weight: 600; padding: 0.2em 0.6em; border-radius: 10px; background-color: var(--success-color); color: white; }
+        .closed-badge.denied { background-color: var(--danger-color); }
         .receipt-number { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: var(--text-muted-color); }
         .form-name { font-size: 0.9rem; color: var(--text-muted-color); margin-top: 0.25rem; font-style: italic; }
         .case-card-body { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; }
@@ -176,6 +178,7 @@
 
         const STATUS_MAP = {
             'Case Was Received': { icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z', color: '#1a73e8' },
+            'Case Status Update': { icon: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-14h2v6h-2zm0 8h2v2h-2z', color: '#5f6368' },
             'Appointment Scheduled': { icon: 'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z', color: '#1a73e8' },
             'Biometrics Taken': { icon: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z', color: '#1a73e8' },
             'Case Is Being Actively Reviewed': { icon: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-14h2v6h-2zm0 8h2v2h-2z', color: '#1a73e8' },
@@ -183,6 +186,7 @@
             'Response To USCIS\' Request For Evidence Was Received': { icon: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z', color: '#1a73e8' },
             'Interview Was Scheduled': { icon: 'M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-2 16h-2v-2h2v2zm-2-4h-2v-4h2v4zm6-2h-2v-2h2v2z', color: '#1a73e8' },
             'Case Approved': { icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z', color: '#1e8e3e' },
+            'Advance Parole Document Was Produced': { icon: 'M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z', color: '#1e8e3e'},
             'New Card Is Being Produced': { icon: 'M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z', color: '#1e8e3e' },
             'Case Was Denied': { icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V7c0-.55.45-1 1-1s1 .45 1 1v5c0 .55-.45 1-1 1zm0 4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z', color: '#d93025' },
             'Unknown': { icon: 'M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z', color: '#5f6368' }
@@ -194,7 +198,8 @@
             'USCISRFERR': 'Response To USCIS\' Request For Evidence Was Received', 'USCISIW': 'Interview Was Scheduled',
             'USCISIWC': 'Interview Was Canceled', 'USCISIWM': 'Interview Was Completed And My Case Must Be Reviewed',
             'USCISAP': 'Case Approved', 'USCISD': 'Case Was Denied', 'USCISCPT': 'New Card Is Being Produced',
-            'USCISP': 'Card Was Picked Up by USPS', 'USCISCD': 'Card Was Delivered To Me By The Post Office'
+            'USCISP': 'Card Was Picked Up by USPS', 'USCISCD': 'Card Was Delivered To Me By The Post Office',
+            'LDA': 'Case Approved', 'SA': 'Case Status Update'
         };
 
         let cases = [];
@@ -205,14 +210,21 @@
         
         const getLatestStatus = (data) => {
             if (!data) return { text: 'No data provided', details: STATUS_MAP['Unknown'] };
+
+            // Form-specific override rules for higher accuracy
+            if (data.formType === 'I-131' && data.areAllGroupMembersAuthorizedForTravel === true) {
+                return { text: 'Advance Parole Document Was Produced', details: STATUS_MAP['Advance Parole Document Was Produced'] };
+            }
+
+            // General event-based logic
             let allUpdates = [];
             if (data.events) data.events.forEach(e => allUpdates.push({ date: new Date(e.eventTimestamp), text: EVENT_CODE_MAP[e.eventCode] || e.eventCode }));
             if (data.notices) data.notices.forEach(n => allUpdates.push({ date: new Date(n.generationDate), text: n.actionType }));
             if (allUpdates.length === 0) return { text: 'Case Received', details: STATUS_MAP['Case Was Received'] };
             allUpdates.sort((a, b) => b.date - a.date);
             const latestText = allUpdates[0].text;
-            const matchingStatus = Object.keys(STATUS_MAP).find(key => latestText.toLowerCase().includes(key.toLowerCase()));
-            return { text: latestText, details: STATUS_MAP[matchingStatus] || STATUS_MAP['Unknown'] };
+            const matchingStatusKey = Object.keys(STATUS_MAP).find(key => latestText && latestText.toLowerCase().includes(key.toLowerCase()));
+            return { text: latestText || 'Status Unknown', details: STATUS_MAP[matchingStatusKey] || STATUS_MAP['Unknown'] };
         };
 
         const renderCaseList = () => {
@@ -226,11 +238,17 @@
                     let cardHTML;
                     if (caseData) {
                         const { text: statusText, details: statusDetails } = getLatestStatus(caseData);
+                        const isDenied = statusText.toLowerCase().includes('denied');
                         cardHTML = `
                             <div class="case-card">
                                 <div class="case-card-main" data-receipt="${caseData.receiptNumber}">
-                                    <h2>${caseData.applicantName || 'N/A'}</h2>
-                                    <p class="receipt-number">${caseData.receiptNumber}</p>
+                                    <div class="card-top-row">
+                                        <div>
+                                            <h2>${caseData.applicantName || 'N/A'}</h2>
+                                            <p class="receipt-number">${caseData.receiptNumber}</p>
+                                        </div>
+                                        ${caseData.closed ? `<span class="closed-badge ${isDenied ? 'denied' : ''}">Closed</span>` : ''}
+                                    </div>
                                     <p class="form-name">${caseData.formName || ''}</p>
                                     <div class="case-card-body">
                                         <svg class="status-icon" width="24" height="24" viewBox="0 0 24 24" fill="${statusDetails.color}"><path d="${statusDetails.icon}"></path></svg>
@@ -246,11 +264,11 @@
                                 </div>
                             </div>
                         `;
-                    } else {
+                    } else { // Unhydrated card
                         cardHTML = `
                             <div class="case-card">
                                 <div class="case-card-main unhydrated">
-                                    <h2>Data Needed</h2>
+                                    <div class="card-top-row"><h2>Data Needed</h2></div>
                                     <p class="receipt-number">${caseItem.receiptNumber}</p>
                                     <p class="form-name">Click below to add data for this case.</p>
                                 </div>
@@ -278,13 +296,28 @@
             }
             const caseData = caseItem.data;
             const { text: statusText, details: statusDetails } = getLatestStatus(caseData);
+            
+            // Build event list from data
             let allEvents = [];
             if (caseData.events) caseData.events.forEach(e => allEvents.push({ date: new Date(e.eventTimestamp), text: EVENT_CODE_MAP[e.eventCode] || e.eventCode }));
             if (caseData.notices) caseData.notices.forEach(n => allEvents.push({ date: new Date(n.generationDate), text: n.actionType, body: `Notice for '${n.actionType}' generated.` }));
+            
+            // Add synthetic event for I-131 if needed
+            if (caseData.formType === 'I-131' && caseData.areAllGroupMembersAuthorizedForTravel === true) {
+                const hasApprovalEvent = allEvents.some(e => e.text.toLowerCase().includes('approved') || e.text.toLowerCase().includes('produced'));
+                if (!hasApprovalEvent) {
+                    allEvents.push({
+                        date: new Date(caseData.updatedAtTimestamp),
+                        text: 'Advance Parole Document Was Produced',
+                        body: 'Travel authorization confirmed from case data.'
+                    });
+                }
+            }
+            
             allEvents.sort((a, b) => a.date - b.date);
 
             const timelineHTML = allEvents.map(event => {
-                const eventStatusKey = Object.keys(STATUS_MAP).find(key => event.text.toLowerCase().includes(key.toLowerCase()));
+                const eventStatusKey = Object.keys(STATUS_MAP).find(key => event.text && event.text.toLowerCase().includes(key.toLowerCase()));
                 const eventIconDetails = STATUS_MAP[eventStatusKey] || STATUS_MAP['Unknown'];
                 return `<li class="completed">
                         <svg class="timeline-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="${eventIconDetails.icon}"></path></svg>
@@ -301,6 +334,7 @@
                         <li><strong>Applicant</strong><span>${caseData.applicantName || 'N/A'}</span></li>
                         <li><strong>Receipt #</strong><span>${caseData.receiptNumber}</span></li>
                         <li><strong>Form</strong><span>${caseData.formName || 'N/A'}</span></li>
+                         ${caseData.closed ? `<li><strong>Case Outcome</strong><span style="font-weight: 700; color: ${statusDetails.color};">Closed</span></li>` : ''}
                         <li><strong>Last System Update</strong><span>${formatDate(caseData.updatedAt)}</span></li>
                     </ul>
                 </div>
