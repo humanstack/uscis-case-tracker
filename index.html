@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>USCIS Case Visualizer</title>
-    <meta name="description" content="Paste your USCIS case JSON data to get a clean, human-readable summary.">
+    <meta name="description" content="Add your USCIS case number to track and visualize its status by pasting the case data.">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Case Visualizer">
@@ -25,11 +25,12 @@
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --border-radius: 12px;
             --box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
+            --pwa-banner-height: 80px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { font-family: var(--font-family); background-color: var(--background-color); color: var(--text-color); line-height: 1.6; }
-        .app-header { background: linear-gradient(to right, #1a73e8, #4285f4); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .app-header { background: linear-gradient(to right, #1a73e8, #4285f4); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;}
         .app-header h1 { font-size: 1.5rem; }
         .add-case-btn { background-color: rgba(255,255,255,0.2); color: white; border: 1px solid white; border-radius: 50%; width: 44px; height: 44px; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
         .add-case-btn:hover { background-color: rgba(255,255,255,0.3); }
@@ -38,10 +39,11 @@
         .case-card { background-color: var(--surface-color); border-radius: var(--border-radius); box-shadow: var(--box-shadow); display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
         .case-card:hover { transform: translateY(-4px); box-shadow: 0 2px 3px 0 rgba(60,64,67,0.3), 0 6px 10px 4px rgba(60,64,67,0.15); }
         .case-card-main { padding: 1rem 1.25rem; cursor: pointer; flex-grow: 1; }
-        .case-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
-        .case-card-header h2 { font-size: 1.1rem; font-weight: 600; margin-right: 1rem; color: var(--text-color); }
+        .case-card-main.unhydrated { filter: grayscale(80%); opacity: 0.8; }
+        .case-card-header h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-color); }
         .receipt-number { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: var(--text-muted-color); }
-        .case-card-body { display: flex; align-items: center; gap: 0.75rem; }
+        .form-name { font-size: 0.9rem; color: var(--text-muted-color); margin-top: 0.25rem; font-style: italic; }
+        .case-card-body { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; }
         .status-icon { flex-shrink: 0; }
         .status-text { font-size: 1rem; font-weight: 500; }
         .case-card-footer { background-color: #f1f3f4; border-top: 1px solid var(--border-color); padding: 0.75rem 1.25rem; font-size: 0.8rem; color: var(--text-muted-color); display: flex; justify-content: space-between; align-items: center; border-bottom-left-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
@@ -61,7 +63,7 @@
         .modal-form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .modal-input, .modal-textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-family: var(--font-family); }
         .modal-textarea { min-height: 150px; resize: vertical; font-family: 'Courier New', Courier, monospace; }
-        #api-link-container { margin-top: 0.5rem; font-size: 0.9rem; }
+        #api-link-container { margin-top: 0.5rem; padding: 0.75rem; background-color: #e8f0fe; border-radius: 8px; font-size: 0.9rem; }
         .modal-button { width: 100%; padding: 0.85rem; border: none; border-radius: 8px; background-color: var(--primary-color); color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         #json-error-message { color: var(--danger-color); margin-top: 1rem; display: none; }
         .view { display: none; }
@@ -71,7 +73,7 @@
         .detail-card { background-color: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-bottom: 1.5rem; }
         .detail-card h3 { font-size: 1.25rem; font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
         .detail-list { list-style: none; }
-        .detail-list li { padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; }
+        .detail-list li { padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); display: flex; flex-wrap: wrap; justify-content: space-between; }
         .detail-list li:last-child { border-bottom: none; }
         .detail-list strong { color: var(--text-muted-color); margin-right: 1rem; font-weight: 400; }
         .detail-list span { text-align: right; font-weight: 500; }
@@ -84,6 +86,11 @@
         .timeline-date { font-size: 0.9rem; font-weight: 500; color: var(--text-muted-color); margin-bottom: 0.25rem; }
         .timeline-title { font-size: 1.1rem; font-weight: 600; }
         .timeline-body { font-size: 0.95rem; }
+        #pwa-banner { display: none; position: fixed; bottom: -100px; left: 1rem; right: 1rem; background-color: var(--text-color); color: white; padding: 1rem; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 3000; animation: slideUp 0.5s forwards; display: flex; justify-content: space-between; align-items: center; }
+        @keyframes slideUp { from { bottom: -100px; } to { bottom: 1rem; } }
+        #pwa-banner p { margin: 0; padding-right: 1rem; font-size: 0.9rem; }
+        #pwa-banner .pwa-actions button { background: var(--primary-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; margin-left: 0.5rem; }
+        #pwa-banner .pwa-actions #pwa-dismiss { background: transparent; }
     </style>
 </head>
 <body>
@@ -96,7 +103,7 @@
             <div id="case-list"></div>
             <div id="empty-state" style="display: none;">
                 <h3>Welcome!</h3>
-                <p>No cases saved yet. Tap the '+' button to add your first case by pasting its data.</p>
+                <p>No cases saved yet. Tap the '+' button to add your first case.</p>
             </div>
         </main>
     </div>
@@ -105,24 +112,42 @@
         <main id="detail-view-content"></main>
     </div>
 
-    <div id="caseModal" class="modal">
+    <div id="addCaseModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h2 id="modal-title">Add New Case</h2>
-            <form id="caseForm">
-                <input type="hidden" id="form-mode" value="add">
+            <h2>Add New Case</h2>
+            <form id="addCaseForm">
                 <div class="modal-form-group">
-                    <label for="receiptNumberInput">Receipt Number</label>
-                    <input type="text" id="receiptNumberInput" class="modal-input" placeholder="e.g., IOE0912345678" required>
-                    <div id="api-link-container"></div>
+                    <label for="addReceiptNumberInput">Receipt Number</label>
+                    <input type="text" id="addReceiptNumberInput" class="modal-input" placeholder="e.g., IOE0912345678" required>
                 </div>
-                <div class="modal-form-group">
-                    <label for="jsonDataInput">Case Data (JSON)</label>
-                    <textarea id="jsonDataInput" class="modal-textarea" placeholder="Paste the JSON data from the USCIS page here..." required></textarea>
+                <button type="submit" class="modal-button">Add Case</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="dataModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Add/Update Case Data</h2>
+            <form id="dataForm">
+                <input type="hidden" id="dataReceiptNumber">
+                <div id="api-link-container"></div>
+                <div class="modal-form-group" style="margin-top: 1rem;">
+                    <label for="jsonDataInput">Paste Case Data (JSON) Here</label>
+                    <textarea id="jsonDataInput" class="modal-textarea" required></textarea>
                 </div>
                 <p id="json-error-message">Invalid JSON data. Please copy the entire content from the API page.</p>
-                <button type="submit" class="modal-button">Save Case</button>
+                <button type="submit" class="modal-button">Save Case Data</button>
             </form>
+        </div>
+    </div>
+
+    <div id="pwa-banner">
+        <p>For quick access, add this app to your Home Screen.</p>
+        <div class="pwa-actions">
+            <button id="pwa-instruct">Instructions</button>
+            <button id="pwa-dismiss">Dismiss</button>
         </div>
     </div>
     
@@ -135,15 +160,18 @@
             caseList: document.getElementById('case-list'),
             emptyState: document.getElementById('empty-state'),
             addCaseBtn: document.getElementById('addCaseBtn'),
-            caseModal: document.getElementById('caseModal'),
-            modalTitle: document.getElementById('modal-title'),
-            closeBtn: document.querySelector('.modal .close-btn'),
-            caseForm: document.getElementById('caseForm'),
-            formMode: document.getElementById('form-mode'),
-            receiptNumberInput: document.getElementById('receiptNumberInput'),
+            addCaseModal: document.getElementById('addCaseModal'),
+            addCaseForm: document.getElementById('addCaseForm'),
+            addReceiptNumberInput: document.getElementById('addReceiptNumberInput'),
+            dataModal: document.getElementById('dataModal'),
+            dataForm: document.getElementById('dataForm'),
+            dataReceiptNumber: document.getElementById('dataReceiptNumber'),
             jsonDataInput: document.getElementById('jsonDataInput'),
             apiLinkContainer: document.getElementById('api-link-container'),
             jsonErrorMessage: document.getElementById('json-error-message'),
+            pwaBanner: document.getElementById('pwa-banner'),
+            pwaInstruct: document.getElementById('pwa-instruct'),
+            pwaDismiss: document.getElementById('pwa-dismiss'),
         };
 
         const STATUS_MAP = {
@@ -152,29 +180,37 @@
             'Biometrics Taken': { icon: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z', color: '#1a73e8' },
             'Case Is Being Actively Reviewed': { icon: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-14h2v6h-2zm0 8h2v2h-2z', color: '#1a73e8' },
             'Request for Additional Evidence Was Sent': { icon: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z', color: '#f9ab00' },
+            'Response To USCIS\' Request For Evidence Was Received': { icon: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z', color: '#1a73e8' },
+            'Interview Was Scheduled': { icon: 'M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-2 16h-2v-2h2v2zm-2-4h-2v-4h2v4zm6-2h-2v-2h2v2z', color: '#1a73e8' },
             'Case Approved': { icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z', color: '#1e8e3e' },
-            'Card Was Produced': { icon: 'M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z', color: '#1e8e3e' },
+            'New Card Is Being Produced': { icon: 'M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z', color: '#1e8e3e' },
             'Case Was Denied': { icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V7c0-.55.45-1 1-1s1 .45 1 1v5c0 .55-.45 1-1 1zm0 4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z', color: '#d93025' },
             'Unknown': { icon: 'M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z', color: '#5f6368' }
         };
 
-        const EVENT_CODE_MAP = { 'IAF': 'Case Was Received', 'FTA0': 'Biometrics Taken', 'NFCB': 'Biometrics Appointment Scheduled' };
-        const ACTION_TYPE_MAP = { 'Appointment Scheduled': 'Appointment Scheduled', 'Courtesy Letter': 'Courtesy Letter Was Mailed', 'Request for Additional Evidence': 'Request for Additional Evidence Was Sent' };
+        const EVENT_CODE_MAP = {
+            'IAF': 'Case Was Received', 'FTA0': 'Biometrics Taken', 'NFCB': 'Biometrics Appointment Scheduled',
+            'USCISCBR': 'Case Is Being Actively Reviewed', 'USCISRFENT': 'Request for Additional Evidence Was Sent',
+            'USCISRFERR': 'Response To USCIS\' Request For Evidence Was Received', 'USCISIW': 'Interview Was Scheduled',
+            'USCISIWC': 'Interview Was Canceled', 'USCISIWM': 'Interview Was Completed And My Case Must Be Reviewed',
+            'USCISAP': 'Case Approved', 'USCISD': 'Case Was Denied', 'USCISCPT': 'New Card Is Being Produced',
+            'USCISP': 'Card Was Picked Up by USPS', 'USCISCD': 'Card Was Delivered To Me By The Post Office'
+        };
 
         let cases = [];
 
-        const getCasesFromStorage = () => JSON.parse(localStorage.getItem('uscisCasesData') || '[]');
-        const saveCasesToStorage = (casesToSave) => localStorage.setItem('uscisCasesData', JSON.stringify(casesToSave));
-        
+        const getCasesFromStorage = () => JSON.parse(localStorage.getItem('uscisCases') || '[]');
+        const saveCasesToStorage = (casesToSave) => localStorage.setItem('uscisCases', JSON.stringify(casesToSave));
         const formatDate = (ds) => ds ? new Date(ds).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : 'N/A';
+        
         const getLatestStatus = (data) => {
+            if (!data) return { text: 'No data provided', details: STATUS_MAP['Unknown'] };
             let allUpdates = [];
             if (data.events) data.events.forEach(e => allUpdates.push({ date: new Date(e.eventTimestamp), text: EVENT_CODE_MAP[e.eventCode] || e.eventCode }));
-            if (data.notices) data.notices.forEach(n => allUpdates.push({ date: new Date(n.generationDate), text: ACTION_TYPE_MAP[n.actionType] || n.actionType }));
-            if (allUpdates.length === 0) return { text: 'Unknown', details: STATUS_MAP['Unknown'] };
+            if (data.notices) data.notices.forEach(n => allUpdates.push({ date: new Date(n.generationDate), text: n.actionType }));
+            if (allUpdates.length === 0) return { text: 'Case Received', details: STATUS_MAP['Case Was Received'] };
             allUpdates.sort((a, b) => b.date - a.date);
             const latestText = allUpdates[0].text;
-            
             const matchingStatus = Object.keys(STATUS_MAP).find(key => latestText.toLowerCase().includes(key.toLowerCase()));
             return { text: latestText, details: STATUS_MAP[matchingStatus] || STATUS_MAP['Unknown'] };
         };
@@ -185,136 +221,117 @@
                 elements.emptyState.style.display = 'block';
             } else {
                 elements.emptyState.style.display = 'none';
-                cases.forEach(caseData => {
-                    const { text: statusText, details: statusDetails } = getLatestStatus(caseData);
-                    const cardHTML = `
-                        <div class="case-card">
-                            <div class="case-card-main" data-receipt="${caseData.receiptNumber}">
-                                <div class="case-card-header">
-                                    <div>
-                                        <h2>${caseData.applicantName || 'N/A'}</h2>
-                                        <p class="receipt-number">${caseData.receiptNumber}</p>
+                cases.forEach(caseItem => {
+                    const caseData = caseItem.data;
+                    let cardHTML;
+                    if (caseData) {
+                        const { text: statusText, details: statusDetails } = getLatestStatus(caseData);
+                        cardHTML = `
+                            <div class="case-card">
+                                <div class="case-card-main" data-receipt="${caseData.receiptNumber}">
+                                    <h2>${caseData.applicantName || 'N/A'}</h2>
+                                    <p class="receipt-number">${caseData.receiptNumber}</p>
+                                    <p class="form-name">${caseData.formName || ''}</p>
+                                    <div class="case-card-body">
+                                        <svg class="status-icon" width="24" height="24" viewBox="0 0 24 24" fill="${statusDetails.color}"><path d="${statusDetails.icon}"></path></svg>
+                                        <span class="status-text">${statusText}</span>
                                     </div>
                                 </div>
-                                <div class="case-card-body">
-                                    <svg class="status-icon" width="24" height="24" viewBox="0 0 24 24" fill="${statusDetails.color}">
-                                        <path d="${statusDetails.icon}"></path>
-                                    </svg>
-                                    <span class="status-text">${statusText}</span>
+                                <div class="case-card-footer">
+                                    <span>Last updated: ${formatDate(caseData.updatedAt)}</span>
+                                    <div class="case-card-actions">
+                                        <button class="update-case-btn" data-receipt="${caseData.receiptNumber}">Update Data</button>
+                                        <button class="delete-case-btn" data-receipt="${caseData.receiptNumber}">Delete</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="case-card-footer">
-                                <span>Last updated: ${formatDate(caseData.updatedAt)}</span>
-                                <div class="case-card-actions">
-                                    <button class="update-case-btn" data-receipt="${caseData.receiptNumber}">Update</button>
-                                    <button class="delete-case-btn" data-receipt="${caseData.receiptNumber}">Delete</button>
+                        `;
+                    } else {
+                        cardHTML = `
+                            <div class="case-card">
+                                <div class="case-card-main unhydrated">
+                                    <h2>Data Needed</h2>
+                                    <p class="receipt-number">${caseItem.receiptNumber}</p>
+                                    <p class="form-name">Click below to add data for this case.</p>
+                                </div>
+                                <div class="case-card-footer">
+                                    <span>No data</span>
+                                    <div class="case-card-actions">
+                                        <button class="update-case-btn" data-receipt="${caseItem.receiptNumber}">Add/Update Data</button>
+                                        <button class="delete-case-btn" data-receipt="${caseItem.receiptNumber}">Delete</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
                     elements.caseList.innerHTML += cardHTML;
                 });
             }
             addCardEventListeners();
         };
-
+        
         const renderDetailView = (receiptNumber) => {
-            const caseData = cases.find(c => c.receiptNumber === receiptNumber);
-            if (!caseData) return;
-
+            const caseItem = cases.find(c => c.receiptNumber === receiptNumber);
+            if (!caseItem || !caseItem.data) {
+                alert('No data available for this case. Please add data first.');
+                return;
+            }
+            const caseData = caseItem.data;
             const { text: statusText, details: statusDetails } = getLatestStatus(caseData);
-            
             let allEvents = [];
             if (caseData.events) caseData.events.forEach(e => allEvents.push({ date: new Date(e.eventTimestamp), text: EVENT_CODE_MAP[e.eventCode] || e.eventCode }));
-            if (caseData.notices) caseData.notices.forEach(n => allEvents.push({ date: new Date(n.generationDate), text: ACTION_TYPE_MAP[n.actionType] || n.actionType, body: `Notice for '${n.actionType}' generated.` }));
+            if (caseData.notices) caseData.notices.forEach(n => allEvents.push({ date: new Date(n.generationDate), text: n.actionType, body: `Notice for '${n.actionType}' generated.` }));
             allEvents.sort((a, b) => a.date - b.date);
 
             const timelineHTML = allEvents.map(event => {
-                const eventStatus = Object.keys(STATUS_MAP).find(key => event.text.toLowerCase().includes(key.toLowerCase()));
-                const eventIcon = STATUS_MAP[eventStatus] || STATUS_MAP['Unknown'];
-                return `
-                    <li class="completed">
-                        <svg class="timeline-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="${eventIcon.icon}"></path></svg>
+                const eventStatusKey = Object.keys(STATUS_MAP).find(key => event.text.toLowerCase().includes(key.toLowerCase()));
+                const eventIconDetails = STATUS_MAP[eventStatusKey] || STATUS_MAP['Unknown'];
+                return `<li class="completed">
+                        <svg class="timeline-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="${eventIconDetails.icon}"></path></svg>
                         <div class="timeline-date">${formatDate(event.date)}</div>
                         <div class="timeline-title">${event.text}</div>
                         ${event.body ? `<div class="timeline-body">${event.body}</div>` : ''}
-                    </li>
-                `;
+                    </li>`;
             }).join('');
 
-            const detailHTML = `
-                <div id="detail-view-header">
-                    <button class="back-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
-                        Back
-                    </button>
-                </div>
-
+            const detailHTML = `<div id="detail-view-header"><button class="back-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>Back</button></div>
                 <div class="detail-card">
-                    <h3>
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="${statusDetails.color}"><path d="${statusDetails.icon}"></path></svg>
-                        ${statusText}
-                    </h3>
+                    <h3><svg width="32" height="32" viewBox="0 0 24 24" fill="${statusDetails.color}"><path d="${statusDetails.icon}"></path></svg>${statusText}</h3>
                     <ul class="detail-list">
                         <li><strong>Applicant</strong><span>${caseData.applicantName || 'N/A'}</span></li>
                         <li><strong>Receipt #</strong><span>${caseData.receiptNumber}</span></li>
-                        <li><strong>Form</strong><span>${caseData.formType}</span></li>
+                        <li><strong>Form</strong><span>${caseData.formName || 'N/A'}</span></li>
                         <li><strong>Last System Update</strong><span>${formatDate(caseData.updatedAt)}</span></li>
                     </ul>
                 </div>
-                
-                <div class="detail-card">
-                    <h3>Case History</h3>
-                    <ul class="timeline">${timelineHTML}</ul>
-                </div>
-            `;
+                <div class="detail-card"><h3>Case History</h3><ul class="timeline">${timelineHTML}</ul></div>`;
 
             elements.detailViewContent.innerHTML = detailHTML;
             elements.listView.classList.remove('active');
             elements.detailView.classList.add('active');
             window.scrollTo(0, 0);
-            document.querySelector('.back-btn').addEventListener('click', showListView);
-        };
-        
-        const showListView = () => {
-            elements.detailView.classList.remove('active');
-            elements.listView.classList.add('active');
-            elements.detailViewContent.innerHTML = '';
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                elements.detailView.classList.remove('active');
+                elements.listView.classList.add('active');
+                elements.detailViewContent.innerHTML = '';
+            });
         };
 
-        const openModal = (mode = 'add', receiptNumber = '') => {
-            elements.caseForm.reset();
-            elements.formMode.value = mode;
+        const openDataModal = (receiptNumber) => {
+            elements.dataForm.reset();
             elements.jsonErrorMessage.style.display = 'none';
-            elements.apiLinkContainer.innerHTML = '';
-
-            if (mode === 'update') {
-                elements.modalTitle.textContent = 'Update Case Data';
-                elements.receiptNumberInput.value = receiptNumber;
-                elements.receiptNumberInput.disabled = true;
-                updateApiLink(receiptNumber);
-            } else {
-                elements.modalTitle.textContent = 'Add New Case';
-                elements.receiptNumberInput.disabled = false;
-            }
-            elements.caseModal.style.display = 'block';
-        };
-
-        const updateApiLink = (receiptNumber) => {
-            if (receiptNumber && receiptNumber.length > 5) {
-                const url = `https://my.uscis.gov/account/case-service/api/cases/${receiptNumber}`;
-                elements.apiLinkContainer.innerHTML = `1. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to get your case data</a><br>2. Copy the entire page content.`;
-            } else {
-                elements.apiLinkContainer.innerHTML = '';
-            }
+            elements.dataReceiptNumber.value = receiptNumber;
+            const url = `https://my.uscis.gov/account/case-service/api/cases/${receiptNumber}`;
+            elements.apiLinkContainer.innerHTML = `1. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to get your case data</a><br>2. Copy the entire page content & paste below.`;
+            elements.dataModal.style.display = 'block';
         };
 
         const addCardEventListeners = () => {
             document.querySelectorAll('.case-card-main').forEach(card => {
-                card.addEventListener('click', () => renderDetailView(card.dataset.receipt));
+                card.addEventListener('click', () => renderDetailView(card.parentElement.querySelector('.update-case-btn').dataset.receipt));
             });
             document.querySelectorAll('.update-case-btn').forEach(btn => {
-                btn.addEventListener('click', () => openModal('update', btn.dataset.receipt));
+                btn.addEventListener('click', () => openDataModal(btn.dataset.receipt));
             });
             document.querySelectorAll('.delete-case-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -326,50 +343,71 @@
                 });
             });
         };
+        
+        const maybeShowPwaBanner = () => {
+            if (cases.length > 0 && !localStorage.getItem('pwaBannerDismissed')) {
+                elements.pwaBanner.style.display = 'flex';
+            }
+        };
+        
+        // --- Event Listeners Setup ---
+        elements.addCaseBtn.addEventListener('click', () => elements.addCaseModal.style.display = 'block');
+        elements.addCaseModal.querySelector('.close-btn').addEventListener('click', () => elements.addCaseModal.style.display = 'none');
+        elements.dataModal.querySelector('.close-btn').addEventListener('click', () => elements.dataModal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target == elements.addCaseModal) elements.addCaseModal.style.display = 'none';
+            if (e.target == elements.dataModal) elements.dataModal.style.display = 'none';
+        });
 
-        elements.addCaseBtn.addEventListener('click', () => openModal('add'));
-        elements.closeBtn.addEventListener('click', () => elements.caseModal.style.display = 'none');
-        window.addEventListener('click', (e) => { if (e.target == elements.caseModal) elements.caseModal.style.display = 'none'; });
-        elements.receiptNumberInput.addEventListener('input', (e) => updateApiLink(e.target.value));
-
-        elements.caseForm.addEventListener('submit', (e) => {
+        elements.addCaseForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const mode = elements.formMode.value;
-            const receiptNumber = elements.receiptNumberInput.value.toUpperCase();
-            let jsonData;
+            const receiptNumber = elements.addReceiptNumberInput.value.toUpperCase().trim();
+            if (!receiptNumber) return;
+            if (cases.some(c => c.receiptNumber === receiptNumber)) {
+                alert('A case with this receipt number already exists.');
+                return;
+            }
+            cases.unshift({ receiptNumber: receiptNumber, data: null });
+            saveCasesToStorage(cases);
+            renderCaseList();
+            elements.addCaseForm.reset();
+            elements.addCaseModal.style.display = 'none';
+            maybeShowPwaBanner();
+        });
 
+        elements.dataForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const receiptNumber = elements.dataReceiptNumber.value;
+            let jsonData;
             try {
                 jsonData = JSON.parse(elements.jsonDataInput.value);
-                if (!jsonData.data || !jsonData.data.receiptNumber) throw new Error('Invalid structure');
+                if (!jsonData.data || jsonData.data.receiptNumber !== receiptNumber) throw new Error('Mismatched receipt number or invalid structure');
                 elements.jsonErrorMessage.style.display = 'none';
             } catch (err) {
                 elements.jsonErrorMessage.style.display = 'block';
                 return;
             }
-
-            if (receiptNumber !== jsonData.data.receiptNumber) {
-                alert('Error: The receipt number you entered does not match the one in the JSON data.');
-                return;
+            const caseIndex = cases.findIndex(c => c.receiptNumber === receiptNumber);
+            if (caseIndex !== -1) {
+                cases[caseIndex].data = jsonData.data;
+                saveCasesToStorage(cases);
+                renderCaseList();
+                elements.dataModal.style.display = 'none';
             }
+        });
 
-            if (mode === 'add' && cases.some(c => c.receiptNumber === receiptNumber)) {
-                alert('A case with this receipt number already exists. Please update it instead.');
-                return;
-            }
-
-            if (mode === 'update') {
-                cases = cases.filter(c => c.receiptNumber !== receiptNumber);
-            }
-            
-            cases.unshift(jsonData.data);
-            saveCasesToStorage(cases);
-            renderCaseList();
-            elements.caseModal.style.display = 'none';
+        elements.pwaDismiss.addEventListener('click', () => {
+            localStorage.setItem('pwaBannerDismissed', 'true');
+            elements.pwaBanner.style.display = 'none';
+        });
+        elements.pwaInstruct.addEventListener('click', () => {
+            alert("To add to your Home Screen:\n\nOn iOS: Tap the 'Share' button in Safari and then 'Add to Home Screen'.\n\nOn Android: Tap the three-dot menu in Chrome and then 'Install app' or 'Add to Home screen'.");
         });
 
         const initialize = () => {
             cases = getCasesFromStorage();
             renderCaseList();
+            maybeShowPwaBanner();
         };
 
         initialize();
