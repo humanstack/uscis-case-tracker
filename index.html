@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>USCIS Case Tracker — Client-Side Only</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="description" content="A privacy-focused USCIS case tracker that runs entirely in your browser. Track multiple cases, view unified timeline, and monitor updates."/>
+  <meta name="theme-color" content="#2563eb"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>"/>
+  <meta name="color-scheme" content="light"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <style>
+    /* Modern CSS Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+      /* Modern color palette using HSL */
+      --hue-primary: 222;  /* Deep blue */
+      --hue-success: 142;  /* Emerald */
+      --hue-warning: 38;   /* Amber */
+      --hue-error: 358;    /* Ruby */
+
+      /* Core colors */
+      --bg: hsl(var(--hue-primary) 25% 97%);
+      --card: hsl(0 0% 100%);
+      --border: hsl(var(--hue-primary) 15% 90%);
+      --text: hsl(var(--hue-primary) 30% 12%);
+      --text-light: hsl(var(--hue-primary) 15% 35%);
+      --muted: hsl(var(--hue-primary) 10% 45%);
+
+      /* Accent colors */
+      --accent: hsl(var(--hue-primary) 90% 50%);
+      --accent-light: hsl(var(--hue-primary) 90% 95%);
+      --accent-hover: hsl(var(--hue-primary) 85% 45%);
+      --accent-border: hsl(var(--hue-primary) 90% 88%);
+
+      /* Status colors */
+      --success: hsl(var(--hue-success) 85% 40%);
+      --success-light: hsl(var(--hue-success) 85% 95%);
+      --warning: hsl(var(--hue-warning) 95% 45%);
+      --warning-light: hsl(var(--hue-warning) 95% 95%);
+      --error: hsl(var(--hue-error) 95% 45%);
+      --error-light: hsl(var(--hue-error) 95% 95%);
+
+      /* Spacing system - compact 4pt grid */
+      --space-2xs: 0.125rem; /* 2px */
+      --space-xs: 0.25rem;   /* 4px */
+      --space-sm: 0.5rem;    /* 8px */
+      --space-md: 0.75rem;   /* 12px */
+      --space-lg: 1rem;      /* 16px */
+      --space-xl: 1.5rem;    /* 24px */
+      --space-2xl: 2rem;     /* 32px */
+
+      /* Typography */
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --line-height-tight: 1.2;
+      --line-height-normal: 1.5;
+      --line-height-relaxed: 1.75;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px hsl(var(--hue-primary) 10% 20% / 0.05);
+      --shadow-md: 0 2px 4px hsl(var(--hue-primary) 10% 20% / 0.08);
+      --shadow-lg: 0 4px 6px hsl(var(--hue-primary) 10% 20% / 0.1);
+      --shadow-focus: 0 0 0 3px hsl(var(--hue-primary) 90% 50% / 0.2);
+
+      /* Animation */
+      --transition-fast: 0.15s ease-in-out;
+      --transition-normal: 0.25s ease-in-out;
+
+      /* Border radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-full: 9999px;
+
+      /* Typography */
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --line-height: 1.6;
+
+      /* Transitions */
+      --transition: 0.2s ease-in-out;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px hsl(var(--hue-primary) 10% 20% / 0.05);
+      --shadow-md: 0 2px 4px hsl(var(--hue-primary) 10% 20% / 0.08);
+      --shadow-lg: 0 4px 6px hsl(var(--hue-primary) 10% 20% / 0.1);
+    }
+
+        body {
+      font-family: var(--font-sans);
+      line-height: var(--line-height-normal);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: var(--accent);
+      background-image: linear-gradient(120deg, var(--accent), hsl(var(--hue-primary) 85% 45%));
+      color: white;
+      padding: var(--space-lg) var(--space-md);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: var(--shadow-lg);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      margin-bottom: var(--space-2xs);
+    }
+
+    header p {
+      font-size: 1rem;
+      color: hsl(var(--hue-primary) 90% 90%);
+      max-width: 24rem;
+      margin: 0 auto;
+    }
+
+    main {
+      max-width: 64rem;
+      margin: var(--space-lg) auto;
+      padding: 0 var(--space-md);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .card > *:not(.card-header) {
+      padding: var(--space-lg);
+    }
+
+    .export-btn {
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      font-size: 0.875rem;
+      padding: var(--space-xs) var(--space-md);
+    }
+
+    .export-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-border);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), hsl(var(--hue-primary) 85% 45%));
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    h2, h3 {
+      color: var(--text);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      margin-bottom: var(--space-lg);
+      line-height: var(--line-height-tight);
+    }
+
+    .input-group {
+      margin-bottom: var(--space-lg);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: var(--space-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font: inherit;
+      color: var(--text);
+      background: white;
+      transition: all var(--transition-normal);
+    }
+
+    input:hover, textarea:hover {
+      border-color: var(--accent-border);
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .hint {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin-top: var(--space-xs);
+    }
+
+    button {
+      cursor: pointer;
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: white;
+      font: inherit;
+      font-weight: 500;
+      color: var(--text);
+      transition: all var(--transition-normal);
+      margin-right: var(--space-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-border);
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: var(--shadow-focus);
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+    }
+
+        .chip-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      min-height: 2.5rem;
+      padding: var(--space-sm);
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      margin-top: var(--space-md);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: var(--space-xs) var(--space-lg) var(--space-xs) var(--space-sm);
+      font-size: 0.875rem;
+      color: var(--text);
+      position: relative;
+      transition: all var(--transition-normal);
+      gap: var(--space-xs);
+    }
+
+    .chip:hover {
+      border-color: var(--accent-border);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .chip-delete {
+      padding: var(--space-2xs);
+      margin: 0;
+      border: none;
+      background: transparent;
+      color: var(--text-light);
+      border-radius: 50%;
+      transition: all var(--transition-normal);
+    }
+
+    .chip-delete:hover {
+      color: var(--error);
+      background: var(--error-light);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .chip-delete .icon {
+      width: 1rem;
+      height: 1rem;
+      margin: 0;
+    }
+
+    .success {
+      background: var(--success);
+      color: white;
+      transform: translateY(0);
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: hsl(var(--hue-primary) 30% 12% / 0.8);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 100;
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      max-width: 48rem;
+      margin: var(--space-xl) auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .modal-close {
+      margin-left: auto;
+      padding: var(--space-xs);
+      color: var(--text-light);
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+      background: var(--border);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .modal-tabs {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: var(--space-xs) var(--space-sm);
+      color: var(--text-light);
+      font-size: 0.875rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .tab-btn:hover {
+      background: var(--border);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .tab-content {
+      display: none;
+      padding: var(--space-lg);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .json-viewer, .diff-viewer {
+      background: var(--bg);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      tab-size: 2;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .diff-item {
+      padding: var(--space-sm);
+      margin: var(--space-xs) 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .diff-added {
+      background: var(--success-light);
+      border-left: 3px solid var(--success);
+    }
+
+    .diff-removed {
+      background: var(--error-light);
+      border-left: 3px solid var(--error);
+    }
+
+    .diff-changed {
+      background: var(--warning-light);
+      border-left: 3px solid var(--warning);
+    }
+
+    .diff-path {
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: var(--space-xs);
+    }
+
+    .diff-value {
+      color: var(--text-light);
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+
+    .export-info {
+      color: var(--text-light);
+      font-size: 0.875rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .export-preview {
+      background: var(--bg);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+
+    .modal-body {
+      padding: var(--space-lg);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: var(--space-xs);
+      margin-left: auto;
+    }
+
+    .timeline {
+      position: relative;
+      border-left: 2px solid var(--accent-border);
+      margin: var(--space-md) 0 0 var(--space-sm);
+      padding-left: var(--space-lg);
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tgroup {
+      margin-bottom: var(--space-xl);
+      position: relative;
+    }
+
+    .tgroup::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: calc(-1 * var(--space-xl) - 5px);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-border);
+    }
+
+    .tdate {
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      color: var(--text);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .titem {
+      margin: var(--space-xs) 0;
+      padding: var(--space-sm) var(--space-md);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.9375rem;
+      transition: all var(--transition-normal);
+      position: relative;
+    }
+
+    .titem:hover {
+      border-color: var(--accent-border);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px) translateX(2px);
+    }
+
+    .titem-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .titem-content > div:first-child {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .view-json {
+      padding: var(--space-xs) var(--space-sm);
+      font-size: 0.75rem;
+      color: var(--text-light);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      opacity: 0.8;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .view-json:hover {
+      color: var(--accent);
+      border-color: var(--accent-border);
+      background: var(--accent-light);
+      opacity: 1;
+    }
+
+    .view-json .icon {
+      width: 1em;
+      height: 1em;
+      margin-right: var(--space-2xs);
+    }
+
+    .titem-main {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .flag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2xs);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: var(--space-2xs) var(--space-xs);
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    .flag.system {
+      color: var(--warning);
+      background: var(--warning-light);
+    }
+
+    .flag.officer {
+      color: var(--success);
+      background: var(--success-light);
+    }
+
+    .flag.completed {
+      color: var(--accent);
+      background: var(--accent-light);
+      font-weight: 600;
+    }
+
+    .insight {
+      margin-top: var(--space-xs);
+      font-size: 0.875rem;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+    }
+
+    .insight.info {
+      color: var(--text-light);
+      border-left: 2px solid var(--accent-border);
+    }
+
+    .insight.success {
+      color: var(--success);
+      background: var(--success-light);
+      border-left: 2px solid var(--success);
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border-radius: 0.75rem;
+      max-width: 48rem;
+      margin: var(--space-xl) auto;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+
+    .modal-tabs {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: var(--space-xs) var(--space-sm);
+      color: var(--muted);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+
+    .tab-btn:hover {
+      background: var(--bg);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .tab-btn.active {
+      background: var(--bg);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .modal-close {
+      margin-left: auto;
+      padding: var(--space-xs);
+      background: transparent;
+      border: none;
+      color: var(--muted);
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .tab-content {
+      display: none;
+      padding: var(--space-lg);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .json-viewer, .diff-viewer {
+      background: var(--bg);
+      padding: var(--space-md);
+      border-radius: 0.5rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.875rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .diff-item {
+      padding: var(--space-xs) var(--space-sm);
+      margin: var(--space-xs) 0;
+      border-radius: 0.25rem;
+    }
+
+    .diff-added {
+      background: hsl(142, 76%, 95%);
+      border-left: 3px solid hsl(142, 76%, 36%);
+    }
+
+    .diff-removed {
+      background: hsl(0, 90%, 95%);
+      border-left: 3px solid hsl(0, 90%, 60%);
+    }
+
+    .diff-changed {
+      background: hsl(var(--hue-warning), 90%, 95%);
+      border-left: 3px solid var(--warn);
+    }
+
+    .diff-path {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .diff-value {
+      color: var(--muted);
+      margin-top: var(--space-xs);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .flag {
+      color: var(--warn);
+      font-weight: 600;
+      margin-left: var(--space-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .flag::before {
+      content: "⚙";
+      font-size: 1rem;
+    }
+
+    /* Additional modern styles */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: var(--space-lg);
+    }
+
+    .hint {
+      display: block;
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-top: calc(var(--space-xs) * -1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .icon {
+      width: 1.25em;
+      height: 1.25em;
+      margin-right: var(--space-xs);
+      vertical-align: -0.125em;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+    }
+
+    .chip-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      min-height: 2.5rem;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    header p {
+      font-size: 0.9375rem;
+      color: white;
+      margin: var(--space-xs) auto var(--space-sm);
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+
+    .privacy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background: hsl(var(--hue-primary) 90% 95% / 0.2);
+      color: white;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: var(--space-md);
+    }
+
+    .privacy-badge .icon {
+      width: 1.25em;
+      height: 1.25em;
+      color: hsl(var(--hue-primary) 90% 90%);
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      text-decoration: none;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      transition: all var(--transition);
+    }
+
+    .github-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .github-link:active {
+      transform: translateY(0);
+    }
+
+    .github-icon {
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    /* Focus styles */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Invalid input styles */
+    input:invalid {
+      border-color: hsl(0, 90%, 70%);
+    }
+
+    input:invalid:focus {
+      box-shadow: 0 0 0 3px hsl(0, 90%, 50% / 0.2);
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --space-lg: 1rem;
+        --space-xl: 1.5rem;
+      }
+
+      body {
+        font-size: 0.9375rem;
+      }
+
+      header h2 {
+        font-size: 1.25rem;
+      }
+
+      .card {
+        padding: var(--space-md);
+        border-radius: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>USCIS Case Tracker</h1>
+  <p class="">100% client-side • Zero data sent to servers • All data stays in your browser</p>
+  <div class="privacy-badge">
+    <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
+    </svg>
+    Private &amp; Secure
+  </div>
+  <a href="https://github.com/humanstack/uscis-case-tracker" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="View source code on GitHub">
+    <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+    </svg>
+    View on GitHub
+  </a>
+</header>
+
+<main>
+  <section class="card" aria-labelledby="about-title">
+    <h2 id="about-title">About / How To</h2>
+    <p class="muted">
+      This is a fully client-side tracker. Your data stays in your browser — no servers.
+    </p>
+    <ol>
+      <li>Log in to <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">myaccount.uscis.gov</a>.</li>
+      <li>Add your receipt numbers below.</li>
+      <li>Click <strong>Open API tabs</strong> to open the official JSON endpoints. Copy the raw JSON from each tab.</li>
+      <li>Paste the JSON here to save a snapshot. The timeline will update automatically.</li>
+    </ol>
+  </section>
+
+  <section class="card" aria-labelledby="receipts-title">
+    <h2 id="receipts-title">Step 1: Manage Receipts</h2>
+    <div class="input-group">
+      <label for="receiptInput" class="sr-only">Receipt Number</label>
+      <input
+        id="receiptInput"
+        type="text"
+        placeholder="Enter receipt number e.g. IOEXXXXXXXXXX"
+        pattern="[A-Z]{3}[0-9]{10}"
+        aria-describedby="receipt-hint"
+      />
+      <span id="receipt-hint" class="hint">Format: 3 letters followed by 10 numbers</span>
+  </div>
+    <div class="button-group">
+      <button class="primary" id="addReceiptBtn" aria-label="Add receipt number">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
+        </svg>
+        Add
+      </button>
+      <button id="openTabsBtn" aria-label="Open API tabs for all receipt numbers">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+          <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+        </svg>
+        Open API tabs
+      </button>
+  </div>
+    <div id="receiptChips" class="chip-container" role="list" aria-label="Added receipt numbers"></div>
+  </section>
+
+  <section class="card" aria-labelledby="json-title">
+    <h2 id="json-title">Step 2: Paste JSON</h2>
+    <div class="input-group">
+      <label for="jsonText" class="sr-only">USCIS JSON Response</label>
+      <textarea
+        id="jsonText"
+        placeholder="Paste USCIS JSON here..."
+        aria-describedby="json-hint"
+        rows="6"
+      ></textarea>
+      <span id="json-hint" class="hint">Paste the raw JSON response from USCIS API</span>
+  </div>
+    <button class="primary" id="saveJsonBtn">
+      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"/>
+        <path d="M3 17a2 2 0 002 2h10a2 2 0 002-2V7.414A2 2 0 0015.414 6L13 3.586A2 2 0 0011.586 3H5a2 2 0 00-2 2v12z"/>
+      </svg>
+      Save Snapshot
+    </button>
+  </section>
+
+  <section class="card" aria-labelledby="timeline-title">
+    <div class="card-header">
+      <h2 id="timeline-title">Unified Timeline</h2>
+      <button onclick="exportTimeline()" class="export-btn" aria-label="Export timeline for Reddit">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+        </svg>
+        Export for Reddit
+      </button>
+  </div>
+    <div id="timeline" class="timeline" role="feed" aria-label="Case updates timeline"></div>
+  </section>
+</main>
+
+<div id="jsonModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-title">Case Data</h3>
+      <div class="modal-tabs">
+        <button onclick="switchTab('full')" class="tab-btn active" id="fullTab">Full JSON</button>
+        <button onclick="switchTab('diff')" class="tab-btn" id="diffTab">View Changes</button>
+      </div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close modal">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+    <div id="fullView" class="tab-content active">
+      <pre id="jsonViewer" class="json-viewer"></pre>
+    </div>
+    <div id="diffView" class="tab-content">
+      <div id="diffViewer" class="diff-viewer"></div>
+    </div>
+  </div>
+</div>
+
+<div id="exportModal" class="modal" role="dialog" aria-labelledby="export-title" aria-modal="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="export-title">Export Timeline for Reddit</h3>
+      <div class="modal-actions">
+        <button onclick="copyExport()" class="primary" id="copyBtn">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+          </svg>
+          Copy to Clipboard
+        </button>
+        <button class="modal-close" onclick="closeExportModal()" aria-label="Close modal">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p class="export-info">This is how your timeline will appear on Reddit. Receipt numbers are masked for privacy.</p>
+      <pre id="exportPreview" class="export-preview"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+const USCIS_BASE="https://my.uscis.gov/account/case-service/api/cases/";
+const TZ="America/New_York";
+
+function loadReceipts(){return JSON.parse(localStorage.getItem("receipts")||"[]")}
+function saveReceipts(r){localStorage.setItem("receipts",JSON.stringify(r))}
+function loadCases(){return JSON.parse(localStorage.getItem("cases")||"{}")}
+function saveCases(c){localStorage.setItem("cases",JSON.stringify(c))}
+
+// Validate receipt number format
+function isValidReceipt(receipt) {
+  return /^[A-Z]{3}[0-9]{10}$/.test(receipt);
+}
+
+// render receipts
+function renderReceipts() {
+  const cont = document.getElementById("receiptChips");
+  cont.innerHTML = "";
+  loadReceipts().forEach(r => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.setAttribute("role", "listitem");
+
+    const text = document.createElement("span");
+    text.textContent = r;
+    chip.appendChild(text);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "chip-delete";
+    deleteBtn.setAttribute("aria-label", `Remove receipt ${r}`);
+    deleteBtn.innerHTML = `
+      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    `;
+    deleteBtn.onclick = () => {
+      const arr = loadReceipts().filter(x => x !== r);
+      saveReceipts(arr);
+      renderReceipts();
+    };
+    chip.appendChild(deleteBtn);
+
+    cont.appendChild(chip);
+  });
+}
+
+// add receipt
+document.getElementById("addReceiptBtn").onclick = () => {
+  const input = document.getElementById("receiptInput");
+  const val = input.value.trim().toUpperCase();
+
+  if (!val) {
+    input.focus();
+    return;
+  }
+
+  if (!isValidReceipt(val)) {
+    input.setCustomValidity("Please enter 3 letters followed by 10 numbers");
+    input.reportValidity();
+    return;
+  }
+
+  input.setCustomValidity("");
+  const arr = loadReceipts();
+
+  if (arr.includes(val)) {
+    input.setCustomValidity("This receipt number is already added");
+    input.reportValidity();
+    return;
+  }
+
+  arr.push(val);
+  saveReceipts(arr);
+  input.value = "";
+  renderReceipts();
+
+  // Show success feedback
+  const btn = document.getElementById("addReceiptBtn");
+  btn.classList.add("success");
+  setTimeout(() => btn.classList.remove("success"), 1000);
+};
+
+// open multiple tabs staggered
+document.getElementById("openTabsBtn").onclick=()=>{
+  const rec=loadReceipts(); if(rec.length===0) return alert("Add receipts first");
+  rec.forEach((r,i)=>setTimeout(()=>window.open(USCIS_BASE+encodeURIComponent(r),"_blank"),i*300));
+};
+
+// JSON viewer modal functions
+function switchTab(tab) {
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.getElementById(tab + 'Tab').classList.add('active');
+
+  // Update tab content
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.remove('active');
+  });
+  document.getElementById(tab + 'View').classList.add('active');
+}
+
+function formatDiffValue(value) {
+  if (typeof value === 'object' && value !== null) {
+    return JSON.stringify(value, null, 2);
+  }
+  return String(value);
+}
+
+function renderDiff(changes) {
+  const diffViewer = document.getElementById('diffViewer');
+  diffViewer.innerHTML = '';
+
+  if (changes.length === 0) {
+    diffViewer.innerHTML = '<div class="diff-item">No changes detected</div>';
+    return;
+  }
+
+  changes.forEach(change => {
+    const item = document.createElement('div');
+    item.className = `diff-item diff-${change.type}`;
+
+    const path = document.createElement('div');
+    path.className = 'diff-path';
+    path.textContent = change.path || 'root';
+
+    const value = document.createElement('div');
+    value.className = 'diff-value';
+
+    if (change.type === 'changed') {
+      value.innerHTML = `From: ${formatDiffValue(change.old)}\nTo: ${formatDiffValue(change.new)}`;
+    } else {
+      value.textContent = formatDiffValue(change.value);
+    }
+
+    item.appendChild(path);
+    item.appendChild(value);
+    diffViewer.appendChild(item);
+  });
+}
+
+function viewJSON(encodedData) {
+  const modal = document.getElementById("jsonModal");
+  const viewer = document.getElementById("jsonViewer");
+  const diffTab = document.getElementById('diffTab');
+
+  try {
+    const context = JSON.parse(decodeURIComponent(encodedData));
+
+    // Extract data and metadata
+    let data, receiptNumber, snapshotIndex;
+
+    if (context.caseContext) {
+      // New format with caseContext
+      data = context.caseContext.data;
+      receiptNumber = context.caseContext.receiptNumber;
+      snapshotIndex = context.caseContext.snapshotIndex;
+    } else {
+      // Old format or direct data
+      data = context;
+      receiptNumber = data.receiptNumber;
+    }
+
+    // Display the JSON data
+    viewer.textContent = JSON.stringify(data, null, 2);
+
+    // Find previous snapshot for diff if we have context
+    if (receiptNumber && typeof snapshotIndex === 'number') {
+      const cases = loadCases();
+      if (cases[receiptNumber] && snapshotIndex > 0) {
+        const prevData = cases[receiptNumber].history[snapshotIndex - 1].data;
+        const changes = computeJsonDiff(prevData, data);
+        renderDiff(changes);
+        diffTab.style.display = 'block';
+      } else {
+        diffTab.style.display = 'none';
+      }
+    } else {
+      diffTab.style.display = 'none';
+    }
+
+  } catch (e) {
+    console.error('Error displaying JSON:', e, encodedData);
+    viewer.textContent = "Error displaying JSON data";
+    diffTab.style.display = 'none';
+  }
+
+  // Reset to full view
+  switchTab('full');
+
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  const modal = document.getElementById("jsonModal");
+  modal.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+// Mask receipt number for privacy
+function maskReceiptNumber(receipt) {
+  if (!receipt) return receipt;
+  return receipt.length > 8 ? receipt.substring(0, 8) + "XXXXX" : receipt;
+}
+
+// Generate Reddit markdown for timeline
+function generateTimelineMarkdown() {
+  const items = buildTimeline();
+  if (items.length === 0) {
+    return null;
+  }
+
+  let text = "**USCIS Timeline**\n\n";
+  let currentDate = null;
+
+  items.forEach(it => {
+    // Add date header if it's a new date
+    if (currentDate !== it.et.dateKey) {
+      currentDate = it.et.dateKey;
+      text += `\n**${new Date(currentDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      })}**\n`;
+    }
+
+    // Clean up the label
+    let label = it.label
+      .replace(/closed=true/g, "Case completed ✨")
+      .replace(/closed=false/g, "")
+      .replace(/undefined/g, "");
+
+    // Mask any receipt numbers in the label
+    const receiptPattern = /[A-Z]{3}[0-9]{10}/g;
+    label = label.replace(receiptPattern, match => maskReceiptNumber(match));
+
+    // Add the timeline item
+    text += `* ${it.et.text} — ${label}`;
+
+    // Add flags
+    if (!afterHours(it.et)) {
+      text += " 👋";
+    }
+
+    // Add insights for events
+    const eventMatch = label.match(/event ([A-Z0-9]+)/);
+    if (eventMatch) {
+      const insight = getEventInsight(eventMatch[1], it.caseContext.data, null);
+      if (insight) {
+        text += `\n  * _${insight.message}_`;
+      }
+    }
+
+    text += "\n";
+  });
+
+  return text;
+}
+
+// Export timeline for Reddit
+function exportTimeline() {
+  const text = generateTimelineMarkdown();
+  if (!text) {
+    alert("No timeline data to export");
+    return;
+  }
+
+  // Show preview modal
+  const modal = document.getElementById("exportModal");
+  const preview = document.getElementById("exportPreview");
+  preview.textContent = text;
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+// Copy export to clipboard
+function copyExport() {
+  const text = document.getElementById("exportPreview").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copyBtn");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `
+      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+      Copied!
+    `;
+    btn.classList.add('success');
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.classList.remove('success');
+    }, 2000);
+  }).catch(() => {
+    alert("Failed to copy to clipboard");
+  });
+}
+
+// Close export modal
+function closeExportModal() {
+  const modal = document.getElementById("exportModal");
+  modal.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+// Close modals on outside click
+document.getElementById("jsonModal").onclick = (e) => {
+  if (e.target === e.currentTarget) closeModal();
+};
+
+document.getElementById("exportModal").onclick = (e) => {
+  if (e.target === e.currentTarget) closeExportModal();
+};
+
+// Close modals on Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (document.getElementById("jsonModal").style.display === "block") {
+      closeModal();
+    }
+    if (document.getElementById("exportModal").style.display === "block") {
+      closeExportModal();
+    }
+  }
+});
+
+// Compute differences between two JSON objects
+function computeJsonDiff(oldData, newData) {
+  const ignoreFields = ["updatedAtTimestamp"];
+  const changes = [];
+
+  function compareValues(path, old, current) {
+    if (ignoreFields.includes(path)) return;
+
+    // Handle null/undefined
+    if (!old && current) {
+      changes.push({ path, type: 'added', value: current });
+      return;
+    }
+    if (old && !current) {
+      changes.push({ path, type: 'removed', value: old });
+      return;
+    }
+    if (!old && !current) return;
+
+    // Handle different types
+    if (typeof old !== typeof current) {
+      changes.push({
+        path,
+        type: 'changed',
+        old: old,
+        new: current
+      });
+      return;
+    }
+
+    // Handle arrays
+    if (Array.isArray(old)) {
+      if (path === 'events') {
+        // For events, compare by eventId
+        const oldIds = new Set(old.map(e => e.eventId));
+        const newIds = new Set(current.map(e => e.eventId));
+
+        current.forEach(e => {
+          if (!oldIds.has(e.eventId)) {
+            changes.push({
+              path: `${path}[${e.eventCode}]`,
+              type: 'added',
+              value: e
+            });
+          }
+        });
+      } else if (path === 'notices') {
+        // For notices, compare by letterId
+        const oldIds = new Set(old.map(n => n.letterId));
+        const newIds = new Set(current.map(n => n.letterId));
+
+        current.forEach(n => {
+          if (!oldIds.has(n.letterId)) {
+            changes.push({
+              path: `${path}[${n.actionType}]`,
+              type: 'added',
+              value: n
+            });
+          }
+        });
+      }
+      return;
+    }
+
+    // Handle objects
+    if (typeof old === 'object') {
+      Object.keys({...old, ...current}).forEach(key => {
+        compareValues(
+          path ? `${path}.${key}` : key,
+          old[key],
+          current[key]
+        );
+      });
+      return;
+    }
+
+    // Handle primitive values
+    if (old !== current) {
+      changes.push({
+        path,
+        type: 'changed',
+        old: old,
+        new: current
+      });
+    }
+  }
+
+  compareValues('', oldData, newData);
+  return changes;
+}
+
+// Check if JSON data has changed
+function hasJsonChanged(oldData, newData) {
+  return computeJsonDiff(oldData, newData).length > 0;
+}
+
+// Check if JSON response indicates an error or unauthorized state
+function isErrorResponse(data) {
+  // Check for explicit error response
+  if (data.error && !data.data) {
+    return true;
+  }
+  // Check for null response
+  if (data.data === null) {
+    return true;
+  }
+  return false;
+}
+
+// save pasted JSON
+document.getElementById("saveJsonBtn").onclick = () => {
+  const raw = document.getElementById("jsonText").value.trim();
+  if (!raw) return;
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch(e) {
+    alert("Invalid JSON format. Please make sure you copied the entire response.");
+    return;
+  }
+
+  // Check for error response
+  if (isErrorResponse(data)) {
+    const message = `Unable to read case data. This usually means you're not logged in to USCIS.\n\n` +
+                   `Please follow these steps:\n` +
+                   `1. Open a new tab and go to myaccount.uscis.gov\n` +
+                   `2. Sign in with your USCIS account\n` +
+                   `3. Come back here and try again\n\n` +
+                   `If you're already logged in, try logging out and back in.`;
+    alert(message);
+    return;
+  }
+
+  if (!data.data || !data.data.receiptNumber) {
+    alert("Invalid response format. The JSON must contain case data with a receipt number.");
+    return;
+  }
+
+  const r = data.data.receiptNumber;
+  const cases = loadCases();
+
+  // Check if this is a new receipt number
+  if (!cases[r]) {
+    cases[r] = {
+      receiptNumber: r,
+      formType: data.data.formType,
+      history: []
+    };
+  }
+  // Check if this is new data
+  else if (cases[r].history.length > 0) {
+    const lastSnapshot = cases[r].history[cases[r].history.length - 1].data;
+    if (!hasJsonChanged(lastSnapshot, data.data)) {
+      alert("No changes detected for " + r + " since last snapshot");
+      document.getElementById("jsonText").value = "";
+      return;
+    }
+  }
+
+  // Save new snapshot
+  cases[r].history.push({
+    at: new Date().toISOString(),
+    data: data.data
+  });
+  saveCases(cases);
+  renderTimeline();
+
+  // Clear input and show success
+  document.getElementById("jsonText").value = "";
+  alert("Saved new snapshot for " + r);
+};
+
+// convert to ET
+function toET(iso){
+  const d=new Date(iso);if(isNaN(d))return null;
+  const opts={timeZone:TZ,year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:true};
+  const t=new Intl.DateTimeFormat("en-US",opts).format(d);
+  const dateKey=new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
+  const h=new Intl.DateTimeFormat("en-US",{timeZone:TZ,hour:'2-digit',hour12:false}).format(d);
+  return {text:t,dateKey,hour:+h};
+}
+function afterHours(et){return et.hour<9||et.hour>=17}
+
+// Get event code description
+function getEventDescription(code) {
+  const eventMap = {
+    'FTA0': 'Biometric or other actions completed',
+    'SA': 'Status Adjusted',
+    'FTA1': 'Supervisor Review'
+  };
+  return eventMap[code] || code;
+}
+
+// Get insight for event code
+function getEventInsight(eventCode, curr, prev) {
+  // Base event description
+  const baseInsight = { type: 'info', message: getEventDescription(eventCode) };
+
+  if (eventCode === 'FTA0') {
+    // Check if this is a biometric-related FTA0 (usually comes in pairs)
+    const prevEvents = prev?.events || [];
+    const ftaCount = prevEvents.filter(e => e.eventCode === 'FTA0').length;
+    if (ftaCount === 1) {
+      return {
+        type: 'info',
+        message: `${baseInsight.message} (Usually paired with another FTA0 for FBI and biometric checks)`
+      };
+    }
+
+    // Check if this is an isolated FTA0 after weeks
+    const lastFTA0 = prevEvents.filter(e => e.eventCode === 'FTA0').pop();
+    if (lastFTA0) {
+      const weeksSinceLastFTA0 = (new Date(curr.updatedAtTimestamp) - new Date(lastFTA0.createdAtTimestamp)) / (7 * 24 * 60 * 60 * 1000);
+      if (weeksSinceLastFTA0 >= 2) {
+        return {
+          type: 'success',
+          message: `${baseInsight.message} (Isolated FTA0 after ${Math.floor(weeksSinceLastFTA0)} weeks - could be a good sign)`
+        };
+      }
+    }
+
+    return baseInsight;
+  }
+
+  if (eventCode === 'SA') {
+    return {
+      type: 'success',
+      message: `${baseInsight.message} ✅ Case approved!`
+    };
+  }
+
+  if (eventCode === 'FTA1') {
+    return {
+      type: 'info',
+      message: `${baseInsight.message} 👀`
+    };
+  }
+
+  return baseInsight;
+}
+
+// build unified timeline
+function buildTimeline(){
+  const cases = loadCases();
+  const items = [];
+
+  for(const c of Object.values(cases)){
+    const hist = c.history;
+    if(!hist) continue;
+
+    for(let i = 0; i < hist.length; i++){
+      const curr = hist[i].data;
+      const prev = i > 0 ? hist[i-1].data : null;
+      const snapshot = hist[i];
+
+      // Store the full case context for diff viewing
+      const caseContext = {
+        receiptNumber: curr.receiptNumber,
+        snapshotIndex: i,
+        data: curr
+      };
+
+      // baseline
+      if(!prev){
+        if(curr.submissionTimestamp) {
+          items.push({
+            when: curr.submissionTimestamp,
+            label: `${curr.formType} ${curr.receiptNumber} submitted`,
+            caseContext
+          });
+        }
+        if(curr.updatedAtTimestamp) {
+          items.push({
+            when: curr.updatedAtTimestamp,
+            label: `${curr.formType} ${curr.receiptNumber} last updated`,
+            caseContext
+          });
+        }
+        if(curr.closed !== undefined) {
+          items.push({
+            when: curr.updatedAtTimestamp || snapshot.at,
+            label: `${curr.formType} closed=${curr.closed}`,
+            caseContext
+          });
+        }
+        (curr.events||[]).forEach(e => items.push({
+          when: e.createdAtTimestamp,
+          label: `${curr.formType} ${e.eventCode} event`,
+          caseContext
+        }));
+        (curr.notices||[]).forEach(n => items.push({
+          when: n.generationDate,
+          label: `${curr.formType} notice: ${n.actionType}`,
+          caseContext
+        }));
+      } else {
+        if(prev.updatedAtTimestamp !== curr.updatedAtTimestamp) {
+          items.push({
+            when: curr.updatedAtTimestamp,
+            label: `${curr.formType} ${curr.receiptNumber} updated`,
+            caseContext
+          });
+        }
+        if(prev.closed !== curr.closed) {
+          items.push({
+            when: curr.updatedAtTimestamp || snapshot.at,
+            label: `${curr.formType} closed=${curr.closed}`,
+            caseContext
+          });
+        }
+        const prevEv = new Set((prev.events||[]).map(e => e.eventId));
+        (curr.events||[]).forEach(e => {
+          if(!prevEv.has(e.eventId)) {
+            items.push({
+              when: e.createdAtTimestamp,
+              label: `${curr.formType} new event ${e.eventCode}`,
+              caseContext
+            });
+          }
+        });
+        const prevNo = new Set((prev.notices||[]).map(n => n.letterId));
+        (curr.notices||[]).forEach(n => {
+          if(!prevNo.has(n.letterId)) {
+            items.push({
+              when: n.generationDate,
+              label: `${curr.formType} new notice: ${n.actionType}`,
+              caseContext
+            });
+          }
+        });
+      }
+    }
+  }
+
+  items.forEach(it => {it.et = toET(it.when);});
+  items.sort((a,b) => new Date(b.when) - new Date(a.when));
+  return items;
+}
+
+// render timeline
+function renderTimeline(){
+  const items=buildTimeline();const cont=document.getElementById("timeline");cont.innerHTML="";
+  if(items.length===0){cont.textContent="No timeline yet.";return}
+  const groups={};
+  items.forEach(it=>{if(!groups[it.et.dateKey]) groups[it.et.dateKey]=[];groups[it.et.dateKey].push(it)});
+  Object.keys(groups).sort((a,b)=>new Date(b)-new Date(a)).forEach(date=>{
+    const g=document.createElement("div");g.className="tgroup";
+    const d=document.createElement("div");d.className="tdate";d.textContent=new Date(date).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});g.appendChild(d);
+    groups[date].forEach(it=>{
+      const t=document.createElement("div");t.className="titem";
+      // Extract event code if this is an event
+      const eventMatch = it.label.match(/event ([A-Z0-9]+)/);
+      const eventCode = eventMatch ? eventMatch[1] : null;
+
+      // Get insight if this is an event
+      const insight = eventCode ? getEventInsight(eventCode, it.caseContext.data, prev) : null;
+
+      // Check if update was during business hours
+      const businessHours = !afterHours(it.et);
+
+      // Check if this is a closed status update
+      const isClosed = it.label.includes('closed=true');
+
+      t.innerHTML = `
+        <div class="titem-content">
+          <div>
+            <div class="titem-main">
+              ${it.et.text} — ${it.label.replace('closed=true', 'Case completed ✨')}
+              ${businessHours ? '<span class="flag officer">👋 officer touch</span>' : '<span class="flag system">⚙️ system update</span>'}
+              ${isClosed ? '<span class="flag completed">🎉 Completed</span>' : ''}
+            </div>
+            ${insight ? `<div class="insight ${insight.type}">${insight.message}</div>` : ''}
+            ${isClosed ? `<div class="insight success">Congratulations! Your case has been completed.</div>` : ''}
+          </div>
+          <button class="view-json" onclick="viewJSON('${encodeURIComponent(JSON.stringify({ caseContext: it.caseContext }))}')" aria-label="View JSON data">
+            <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M4.25 2A2.25 2.25 0 002 4.25v11.5A2.25 2.25 0 004.25 18h11.5A2.25 2.25 0 0018 15.75V4.25A2.25 2.25 0 0015.75 2H4.25zm4.03 6.28a.75.75 0 00-1.06-1.06L4.97 9.47a.75.75 0 000 1.06l2.25 2.25a.75.75 0 001.06-1.06L6.56 10l1.72-1.72zm4.5-1.06a.75.75 0 10-1.06 1.06L13.44 10l-1.72 1.72a.75.75 0 101.06 1.06l2.25-2.25a.75.75 0 000-1.06l-2.25-2.25z" clip-rule="evenodd"/>
+            </svg>
+            View JSON
+          </button>
+        </div>`;
+      g.appendChild(t);
+    });
+    cont.appendChild(g);
+  });
+}
+
+renderReceipts();renderTimeline();
+</script>
+</body>
+</html>
