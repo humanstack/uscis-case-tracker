@@ -189,6 +189,84 @@
       opacity: 1;
     }
 
+    /* Collapsible card styles */
+    .card.collapsible .card-header {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color var(--transition-normal);
+    }
+
+    .card.collapsible .card-header:hover {
+      background: var(--accent-light);
+    }
+
+    .card.collapsible .card-body {
+      overflow: hidden;
+      transition: max-height var(--transition-normal) ease-out, padding var(--transition-normal) ease-out;
+    }
+
+    .card.collapsible.collapsed .card-body {
+      max-height: 0;
+      padding: 0 var(--space-lg);
+    }
+
+    .card.collapsible:not(.collapsed) .card-body {
+      max-height: 1000px; /* Large enough to accommodate content */
+      padding: var(--space-lg);
+    }
+
+    .collapse-icon {
+      transition: transform var(--transition-normal);
+      margin-left: auto;
+    }
+
+    .card.collapsible.collapsed .collapse-icon {
+      transform: rotate(-90deg);
+    }
+
+    /* Collapsed quick links */
+    .collapsed-content {
+      display: none;
+      padding: var(--space-sm) var(--space-lg) var(--space-md);
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .card.collapsible.collapsed .collapsed-content {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .quick-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background: white;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent-border);
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all var(--transition-normal);
+    }
+
+    .quick-link:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-link .icon {
+      width: 1em;
+      height: 1em;
+      margin: 0;
+    }
+
     h2, h3 {
       color: var(--text);
       font-weight: 600;
@@ -965,49 +1043,80 @@
 </header>
 
 <main>
-  <section class="card" aria-labelledby="about-title">
-    <h2 id="about-title">About / How To</h2>
-    <p class="muted">
-      This is a fully client-side tracker. Your data stays in your browser — no servers.
-    </p>
-    <ol>
-      <li>Log in to <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">myaccount.uscis.gov</a>.</li>
-      <li>Add your receipt numbers below.</li>
-      <li>Click <strong>Open API tabs</strong> to open the official JSON endpoints.<strong>Allow popups if you have multiple cases</strong></li>
-      <li>Copy the raw JSON from each tab.</li>
-      <li>Paste the JSON here to save a snapshot. The timeline will update automatically.</li>
-    </ol>
+  <section id="aboutSection" class="card collapsible" aria-labelledby="about-title">
+    <div class="card-header" onclick="toggleCollapse('aboutSection')">
+      <h2 id="about-title">About / How To</h2>
+      <svg class="collapse-icon icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+    <div class="collapsed-content">
+      <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener" class="quick-link">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+        </svg>
+        Login to USCIS
+      </a>
+    </div>
+    <div class="card-body">
+      <p class="muted">
+        This is a fully client-side tracker. Your data stays in your browser — no servers.
+      </p>
+      <ol>
+        <li>Log in to <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">myaccount.uscis.gov</a>.</li>
+        <li>Add your receipt numbers below.</li>
+        <li>Click <strong>Open API tabs</strong> to open the official JSON endpoints. Copy the raw JSON from each tab.</li>
+        <li>Paste the JSON here to save a snapshot. The timeline will update automatically.</li>
+      </ol>
+    </div>
   </section>
 
-  <section class="card" aria-labelledby="receipts-title">
-    <h2 id="receipts-title">Step 1: Manage Receipts</h2>
-    <div class="input-group">
-      <label for="receiptInput" class="sr-only">Receipt Number</label>
-      <input
-        id="receiptInput"
-        type="text"
-        placeholder="Enter receipt number e.g. IOEXXXXXXXXXX"
-        pattern="[A-Z]{3}[0-9]{10}"
-        aria-describedby="receipt-hint"
-      />
-      <span id="receipt-hint" class="hint">Format: 3 letters followed by 10 numbers</span>
-  </div>
-    <div class="button-group">
-      <button class="primary" id="addReceiptBtn" aria-label="Add receipt number">
-        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
-        </svg>
-        Add
-      </button>
-      <button id="openTabsBtn" aria-label="Open API tabs for all receipt numbers">
+  <section id="receiptsSection" class="card collapsible" aria-labelledby="receipts-title">
+    <div class="card-header" onclick="toggleCollapse('receiptsSection')">
+      <h2 id="receipts-title">Step 1: Manage Receipts</h2>
+      <svg class="collapse-icon icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+    <div class="collapsed-content">
+      <button onclick="openAllApiTabs()" class="quick-link" style="border: none; cursor: pointer;">
         <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
           <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
         </svg>
-        Open API tabs
+        Open All API tabs
       </button>
-  </div>
-    <div id="receiptChips" class="chip-container" role="list" aria-label="Added receipt numbers"></div>
+      <div id="receiptChipsCollapsed" class="chip-container" role="list" aria-label="Receipt numbers with individual API links"></div>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <label for="receiptInput" class="sr-only">Receipt Number</label>
+        <input
+          id="receiptInput"
+          type="text"
+          placeholder="Enter receipt number e.g. IOEXXXXXXXXXX"
+          pattern="[A-Z]{3}[0-9]{10}"
+          aria-describedby="receipt-hint"
+        />
+        <span id="receipt-hint" class="hint">Format: 3 letters followed by 10 numbers</span>
+      </div>
+      <div class="button-group">
+        <button class="primary" id="addReceiptBtn" aria-label="Add receipt number">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
+          </svg>
+          Add
+        </button>
+        <button id="openTabsBtn" aria-label="Open API tabs for all receipt numbers">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+          </svg>
+          Open API tabs
+        </button>
+      </div>
+      <div id="receiptChips" class="chip-container" role="list" aria-label="Added receipt numbers"></div>
+    </div>
   </section>
 
   <section class="card" aria-labelledby="json-title">
@@ -1111,8 +1220,13 @@ function isValidReceipt(receipt) {
 // render receipts
 function renderReceipts() {
   const cont = document.getElementById("receiptChips");
+  const collapsedCont = document.getElementById("receiptChipsCollapsed");
+
   cont.innerHTML = "";
+  collapsedCont.innerHTML = "";
+
   loadReceipts().forEach(r => {
+    // Render for expanded view
     const chip = document.createElement("div");
     chip.className = "chip";
     chip.setAttribute("role", "listitem");
@@ -1135,8 +1249,23 @@ function renderReceipts() {
       renderReceipts();
     };
     chip.appendChild(deleteBtn);
-
     cont.appendChild(chip);
+
+    // Render for collapsed view with API link
+    const collapsedChip = document.createElement("button");
+    collapsedChip.className = "quick-link";
+    collapsedChip.style.cursor = "pointer";
+    collapsedChip.setAttribute("aria-label", `Open API tab for ${r}`);
+    collapsedChip.onclick = () => openSingleApiTab(r);
+
+    collapsedChip.innerHTML = `
+      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+        <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+      </svg>
+      ${r}
+    `;
+    collapsedCont.appendChild(collapsedChip);
   });
 }
 
@@ -1177,10 +1306,18 @@ document.getElementById("addReceiptBtn").onclick = () => {
 };
 
 // open multiple tabs staggered
-document.getElementById("openTabsBtn").onclick=()=>{
-  const rec=loadReceipts(); if(rec.length===0) return alert("Add receipts first");
+function openAllApiTabs() {
+  const rec=loadReceipts();
+  if(rec.length===0) return alert("Add receipts first");
   rec.forEach((r,i)=>setTimeout(()=>window.open(USCIS_BASE+encodeURIComponent(r),"_blank"),i*300));
-};
+}
+
+// open single API tab for a specific receipt
+function openSingleApiTab(receiptNumber) {
+  window.open(USCIS_BASE+encodeURIComponent(receiptNumber),"_blank");
+}
+
+document.getElementById("openTabsBtn").onclick = openAllApiTabs;
 
 // JSON viewer modal functions
 function switchTab(tab) {
@@ -1301,6 +1438,25 @@ function maskReceiptNumber(receipt) {
   return receipt.length > 8 ? receipt.substring(0, 8) + "XXXXX" : receipt;
 }
 
+// Round timestamp to nearest hour for Reddit export
+function toETRounded(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return null;
+
+  // Round to nearest hour
+  const minutes = d.getMinutes();
+  if (minutes >= 30) {
+    d.setHours(d.getHours() + 1);
+  }
+  d.setMinutes(0, 0, 0); // Set minutes, seconds, and milliseconds to 0
+
+  const opts = {timeZone: TZ, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true};
+  const t = new Intl.DateTimeFormat("en-US", opts).format(d);
+  const dateKey = new Intl.DateTimeFormat("en-CA", {timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit'}).format(d);
+  const h = new Intl.DateTimeFormat("en-US", {timeZone: TZ, hour: '2-digit', hour12: false}).format(d);
+  return {text: t, dateKey, hour: +h};
+}
+
 // Generate Reddit markdown for timeline
 function generateTimelineMarkdown() {
   const items = buildTimeline();
@@ -1332,11 +1488,14 @@ function generateTimelineMarkdown() {
     const receiptPattern = /[A-Z]{3}[0-9]{10}/g;
     label = label.replace(receiptPattern, match => maskReceiptNumber(match));
 
-    // Add the timeline item
-    text += `* ${it.et.text} — ${label}`;
+    // Use rounded timestamp for Reddit export
+    const roundedET = toETRounded(it.when);
 
-    // Add flags
-    if (!afterHours(it.et)) {
+    // Add the timeline item
+    text += `* ${roundedET.text} — ${label}`;
+
+    // Add flags (use rounded timestamp for consistency)
+    if (!afterHours(roundedET)) {
       text += " 👋";
     }
 
@@ -1777,7 +1936,7 @@ function renderTimeline(){
       const eventCode = eventMatch ? eventMatch[1] : null;
 
       // Get insight if this is an event
-      const insight = eventCode ? getEventInsight(eventCode, it.caseContext.data, prev) : null;
+      const insight = eventCode ? getEventInsight(eventCode, it.caseContext.data, null) : null;
 
       // Check if update was during business hours
       const businessHours = !afterHours(it.et);
@@ -1809,7 +1968,44 @@ function renderTimeline(){
   });
 }
 
-renderReceipts();renderTimeline();
+// Collapsible section functionality
+function toggleCollapse(sectionId) {
+  const section = document.getElementById(sectionId);
+  section.classList.toggle('collapsed');
+
+  // Save collapsed state to localStorage
+  const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+  collapsedSections[sectionId] = section.classList.contains('collapsed');
+  localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+}
+
+function initializeCollapsedSections() {
+  const cases = loadCases();
+  const hasCases = Object.keys(cases).length > 0;
+
+  // Get saved collapsed states
+  const savedCollapsedStates = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+
+  // Auto-collapse sections if user has cases (unless user has manually expanded them)
+  if (hasCases) {
+    if (savedCollapsedStates.aboutSection === undefined) {
+      document.getElementById('aboutSection').classList.add('collapsed');
+    }
+    if (savedCollapsedStates.receiptsSection === undefined) {
+      document.getElementById('receiptsSection').classList.add('collapsed');
+    }
+  }
+
+  // Apply saved collapsed states
+  Object.entries(savedCollapsedStates).forEach(([sectionId, isCollapsed]) => {
+    const section = document.getElementById(sectionId);
+    if (section && isCollapsed) {
+      section.classList.add('collapsed');
+    }
+  });
+}
+
+renderReceipts();renderTimeline();initializeCollapsedSections();
 </script>
 </body>
 </html>
