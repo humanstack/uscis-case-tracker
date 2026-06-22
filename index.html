@@ -48,6 +48,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="apple-mobile-web-app-title" content="USCIS Tracker"/>
 
+  <script src="./DocumentStatusCategoryCode.js"></script>
+
   <!-- Structured Data / JSON-LD for WebApplication -->
   <script type="application/ld+json">
   {
@@ -235,11 +237,8 @@
       color: white;
       padding: var(--space-2xl) var(--space-lg);
       text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: relative;
       box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(10px);
       transition: padding var(--transition-normal);
     }
 
@@ -690,11 +689,17 @@
 
     .modal-close {
       margin-left: auto;
-      padding: var(--space-sm);
+      align-self: center;
+      padding: 0;
+      width: 2rem;
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       color: var(--text-light);
       border: none;
       background: transparent;
-      border-radius: var(--radius-full);
+      border-radius: 50%;
       flex-shrink: 0;
     }
 
@@ -932,6 +937,96 @@
       margin-bottom: var(--space-xs);
     }
 
+    /* Card body ol/ul lists */
+    .card-body > ol,
+    .card-body > ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      background: linear-gradient(to bottom, hsl(var(--hue-primary) 20% 99%), hsl(var(--hue-primary) 20% 97%));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      counter-reset: step-counter;
+    }
+
+    .card-body > ol li,
+    .card-body > ul li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 0.9375rem;
+      line-height: var(--line-height-relaxed);
+      counter-increment: step-counter;
+    }
+
+    .card-body > ol li:last-child,
+    .card-body > ul li:last-child {
+      border-bottom: none;
+    }
+
+    .card-body > ol li::before {
+      content: counter(step-counter);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.5rem;
+      height: 1.5rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1.5px solid var(--accent-border);
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .card-body > ol li a,
+    .card-body > ul li a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .card-body > ol li a:hover,
+    .card-body > ul li a:hover {
+      text-decoration: underline;
+    }
+
+    .uscis-login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) var(--space-md);
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1.5px solid var(--accent-border);
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all var(--transition-normal);
+      vertical-align: middle;
+      margin: 0 var(--space-xs);
+    }
+
+    .uscis-login-btn svg {
+      width: 0.875em;
+      height: 0.875em;
+      flex-shrink: 0;
+    }
+
+    .uscis-login-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+    }
+
     /* Case summary cards */
     .case-summary-grid {
       display: grid;
@@ -1036,35 +1131,64 @@
       border: 1px solid var(--success-border);
     }
 
+    /* ── Timeline ─────────────────────────────────────────── */
+    /*
+     * The vertical line sits at left: 0 of .timeline (line drawn via ::before at left:0).
+     * padding-left: 2.5rem gives space for dots + tick lines to the right.
+     * margin-left: 0 aligns the line with the card's left content edge.
+     */
     .timeline {
       position: relative;
-      border-left: 3px solid var(--accent-border);
-      margin: var(--space-lg) 0 0 var(--space-md);
-      padding-left: var(--space-2xl);
+      margin: 0 0 0 3rem;
+      padding-left: 2.5rem;
     }
 
+    /* Vertical line — at left: 0 of .timeline */
     .timeline::before {
       content: '';
       position: absolute;
-      top: -10px;
-      left: -10px;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, hsl(var(--hue-primary) 95% 55%), hsl(var(--hue-primary) 85% 48%));
-      border: 3px solid white;
-      box-shadow: var(--shadow-md);
-      z-index: 2;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      background: var(--accent-border);
     }
 
+    /* Bottom fade overlay */
     .timeline::after {
       content: '';
       position: absolute;
       bottom: 0;
-      left: -1.5px;
-      width: 3px;
-      height: 40px;
-      background: linear-gradient(to bottom, var(--accent-border), transparent);
+      left: 0;
+      width: 2px;
+      height: 3rem;
+      background: linear-gradient(to bottom, transparent, hsl(var(--hue-primary) 20% 97%));
+      pointer-events: none;
+    }
+
+    /* "NEWEST" label — centered on the vertical line */
+    .timeline-newest {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      top: -15px;
+      left: -2.5rem;
+      transform: translateX(-50%);
+      margin-bottom: var(--space-xl);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      background: var(--accent-light);
+      border: 1.5px solid var(--accent-border);
+      border-radius: var(--radius-full);
+      padding: 0.3rem 0.875rem;
+      white-space: nowrap;
+      line-height: 1.5;
+    }
+
+    .tgroup:last-child {
+      margin-bottom: 0;
     }
 
     .tgroup {
@@ -1072,27 +1196,29 @@
       position: relative;
     }
 
+    /* Date group dot — line is at left: -(2.5rem) from content area
+       dot center: left: -2.5rem - 5px (half of 10px)  */
     .tgroup::before {
       content: '';
       position: absolute;
-      top: 14px;
-      left: calc(-1 * var(--space-2xl) - 6.5px);
+      top: 0.25rem;
+      left: calc(-2.5rem - 4px);
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background: white;
-      border: 3px solid var(--accent);
-      box-shadow: var(--shadow-sm);
+      border: 2.5px solid var(--accent);
+      box-shadow: 0 0 0 3px hsl(var(--hue-primary) 90% 93%);
       z-index: 1;
     }
 
     .tdate {
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: var(--space-lg);
       color: var(--text);
-      font-size: 0.9375rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
       display: flex;
       align-items: center;
       gap: var(--space-sm);
@@ -1101,46 +1227,76 @@
     .tdate::after {
       content: '';
       flex: 1;
-      height: 2px;
+      height: 1px;
       background: linear-gradient(to right, var(--border), transparent);
     }
 
     .titem {
-      margin: var(--space-sm) 0;
-      padding: var(--space-lg);
+      flex: 1;
+      margin: 0;
+      padding: var(--space-md) var(--space-lg);
       background: white;
-      border: 1.5px solid var(--border);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       font-size: 0.9375rem;
-      transition: all var(--transition-normal);
-      position: relative;
+      transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
       box-shadow: var(--shadow-xs);
     }
 
-    .titem::before {
-      content: '';
-      position: absolute;
-      left: -25px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 6px;
-      height: 6px;
+    /* Row wraps the static connector + sliding card */
+    .titem-row {
+      display: flex;
+      align-items: center;
+      margin: var(--space-sm) 0;
+      /* line at -2.5rem from content; pull row so dot center lands on line
+         pull = 2.5rem + half-dot(4px) = 2.5rem + 4px */
+      margin-left: calc(-2.5rem - 3px);
+    }
+
+    /* Connector: dot + tick line — never moves */
+    .titem-connector {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      /* same as pull so card resumes at original position */
+      width: calc(2.5rem + 4px);
+    }
+
+    .titem-dot {
+      display: block;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--border);
-      transition: all var(--transition-normal);
+      background: var(--accent);
+      border: 2px solid white;
+      box-shadow: 0 0 0 2px var(--accent-border);
+      flex-shrink: 0;
+      transition: box-shadow var(--transition-normal);
+    }
+
+    .titem-tick {
+      display: block;
+      flex: 1;
+      height: 1px;
+      background: var(--accent-border);
+      transition: background var(--transition-normal);
     }
 
     .titem:hover {
       border-color: var(--accent);
       box-shadow: var(--shadow-md);
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
 
-    .titem:hover::before {
-      background: var(--accent);
-      width: 8px;
-      height: 8px;
-      left: -26px;
+    /* On hover extend tick and brighten dot glow — connector stays put */
+    .titem-row:has(.titem:hover) .titem-dot {
+      box-shadow: 0 0 0 4px hsl(var(--hue-primary) 90% 88%);
+    }
+
+    .titem-row:has(.titem:hover) .titem-tick {
+      background: var(--accent-border);
+      /* extend by 3px to fill the translateX gap */
+      margin-right: -3px;
     }
 
     .titem-content {
@@ -1156,10 +1312,12 @@
     }
 
     .titem-time {
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       color: var(--muted);
       font-weight: 600;
       margin-bottom: var(--space-xs);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
     }
 
     .view-json {
@@ -1276,6 +1434,7 @@
       display: flex;
       gap: var(--space-sm);
       flex-wrap: wrap;
+      margin-bottom: var(--space-xl);
     }
 
     .icon {
@@ -1549,8 +1708,8 @@
       }
 
       .timeline {
-        padding-left: var(--space-xl);
-        margin-left: var(--space-sm);
+        padding-left: 2rem;
+        margin-left: 0;
       }
 
       .modal {
@@ -1730,24 +1889,112 @@
       height: 1px;
       overflow: hidden;
     }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .hero-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      color: white;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+      cursor: pointer;
+      margin: 0;
+      position: absolute;
+      top: 0.675rem;
+      right: var(--space-xl);
+      flex-shrink: 0;
+    }
+
+    .hero-toggle:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .hero-toggle:active {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
+    }
+
+    .hero-toggle-icon {
+      width: 1rem;
+      height: 1rem;
+      transition: transform var(--transition-normal);
+      flex-shrink: 0;
+    }
+
+    header.collapsed .hero-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .hero-hide-label {
+      display: none;
+    }
+
+    header.collapsed {
+      padding: var(--space-lg) var(--space-xl);
+    }
+
+    header.collapsed h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    header.collapsed p,
+    header.collapsed .privacy-badge,
+    header.collapsed .github-link {
+      display: none;
+    }
   </style>
 </head>
 <body itemscope itemtype="https://schema.org/WebApplication">
-<header>
-  <h1 itemprop="name">USCIS Case Tracker - Free Privacy-Focused Immigration Status Tracker</h1>
-  <p itemprop="description">100% client-side • Zero data sent to servers • All data stays in your browser</p>
-  <div class="privacy-badge" role="status" aria-label="Privacy and security badge">
-    <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" role="img" alt="Security shield icon">
-      <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
+<header id="heroBanner">
+  <button type="button" id="heroToggleBtn" class="hero-toggle" aria-label="Toggle banner" aria-expanded="true">
+    <svg class="hero-toggle-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
     </svg>
-    Private &amp; Secure
+  </button>
+  <div class="hero-content">
+    <h1 itemprop="name">USCIS Case Tracker - Free Privacy-Focused Immigration Status Tracker</h1>
+    <p itemprop="description">100% client-side • Zero data sent to servers • All data stays in your browser</p>
+    <div class="hero-badges">
+      <div class="privacy-badge" role="status" aria-label="Privacy and security badge">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" role="img" alt="Security shield icon">
+          <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
+        </svg>
+        Private &amp; Secure
+      </div>
+      <a href="https://github.com/humanstack/uscis-case-tracker" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="View USCIS Case Tracker source code on GitHub" title="Open source USCIS immigration case tracker">
+        <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" role="img" alt="GitHub logo">
+          <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
   </div>
-  <a href="https://github.com/humanstack/uscis-case-tracker" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="View USCIS Case Tracker source code on GitHub" title="Open source USCIS immigration case tracker">
-    <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" role="img" alt="GitHub logo">
-      <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-    </svg>
-    View on GitHub
-  </a>
 </header>
 
 <main>
@@ -1780,7 +2027,16 @@
         </div>
       </div>
       <ol>
-        <li>First, log in to <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">myaccount.uscis.gov</a> in a separate tab</li>
+        <li>
+          <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener" class="uscis-login-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+            </svg>
+            Login to USCIS
+          </a>
+          in a separate tab
+        </li>
         <li>Add your USCIS receipt numbers below (e.g., IOE1234567890)</li>
         <li>Click "Open API tabs" to open official USCIS JSON endpoints</li>
         <li>Copy the raw JSON from each tab and paste it into Step 2</li>
@@ -1852,9 +2108,11 @@
   </section>
 
   <section class="card" aria-labelledby="json-title" id="step2Section">
-    <div class="step-header">
-      <span class="step-indicator" id="step2Indicator">2</span>
-      <h2 id="json-title">Get Case Data from USCIS</h2>
+    <div class="card-header">
+      <div class="step-header">
+        <span class="step-indicator" id="step2Indicator">2</span>
+        <h2 id="json-title">Get Case Data from USCIS</h2>
+      </div>
     </div>
     <div class="helper-callout" id="step2Helper">
       <svg class="helper-callout-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -1870,7 +2128,7 @@
         </ol>
       </div>
     </div>
-    <div class="input-group">
+    <div class="input-group" style="margin-bottom: 0;">
       <label for="jsonText" class="sr-only">USCIS JSON Response</label>
       <textarea
         id="jsonText"
@@ -1881,14 +2139,16 @@ After clicking 'Open API tabs', you'll see a page with JSON data. Copy everythin
         rows="8"
       ></textarea>
       <span id="json-hint" class="hint">Paste the entire JSON response from the USCIS API tab</span>
+      <div style="margin-top: var(--space-lg); margin-bottom: 0;">
+        <button class="primary" id="saveJsonBtn">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"/>
+            <path d="M3 17a2 2 0 002 2h10a2 2 0 002-2V7.414A2 2 0 0015.414 6L13 3.586A2 2 0 0011.586 3H5a2 2 0 00-2 2v12z"/>
+          </svg>
+          Save Snapshot
+        </button>
+      </div>
     </div>
-    <button class="primary" id="saveJsonBtn">
-      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"/>
-        <path d="M3 17a2 2 0 002 2h10a2 2 0 002-2V7.414A2 2 0 0015.414 6L13 3.586A2 2 0 0011.586 3H5a2 2 0 00-2 2v12z"/>
-      </svg>
-      Save Snapshot
-    </button>
   </section>
 
   <section class="card" aria-labelledby="timeline-title">
@@ -2437,11 +2697,7 @@ function generateTimelineMarkdown() {
     // Add date header if it's a new date
     if (currentDate !== it.et.dateKey) {
       currentDate = it.et.dateKey;
-      text += `\n**${new Date(currentDate).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      })}**\n`;
+      text += `\n**${formatDateKey(currentDate)}**\n`;
     }
 
     // Clean up the label
@@ -2825,16 +3081,6 @@ function toET(iso){
 }
 function afterHours(et){return et.hour<9||et.hour>=17}
 
-// Get event code description
-function getEventDescription(code) {
-  const eventMap = {
-    'FTA0': 'Biometric or other actions completed',
-    'SA': 'Status Adjusted',
-    'FTA1': 'Supervisor Review'
-  };
-  return eventMap[code] || code;
-}
-
 // Get insight for event code
 function getEventInsight(eventCode, curr, prev) {
   // Base event description
@@ -2904,51 +3150,46 @@ function buildTimeline(){
         data: curr
       };
 
-      // baseline
+      const formType = curr.formType || '';
+
+      // baseline (first snapshot)
       if(!prev){
         if(curr.submissionTimestamp) {
           items.push({
             when: curr.submissionTimestamp,
-            label: `${curr.formType} ${curr.receiptNumber} submitted`,
+            label: `${formType} ${curr.receiptNumber} submitted`,
             caseContext
           });
         }
         if(curr.updatedAtTimestamp) {
           items.push({
             when: curr.updatedAtTimestamp,
-            label: `${curr.formType} ${curr.receiptNumber} last updated`,
+            label: `${formType} ${curr.receiptNumber} last updated`,
             caseContext
           });
         }
-        if(curr.closed !== undefined) {
+        if(curr.closed) {
           items.push({
             when: curr.updatedAtTimestamp || snapshot.at,
-            label: `${curr.formType} closed=${curr.closed}`,
+            label: `${formType} closed=${curr.closed}`,
             caseContext
           });
         }
         (curr.events||[]).forEach(e => items.push({
           when: e.createdAtTimestamp,
-          label: `${curr.formType} ${e.eventCode} event`,
+          label: `${formType} ${window.getEventDescription(e.eventCode)}`,
           caseContext
         }));
         (curr.notices||[]).forEach(n => items.push({
           when: n.generationDate,
-          label: `${curr.formType} notice: ${n.actionType}`,
+          label: `${formType} ${n.actionType}`,
           caseContext
         }));
       } else {
-        if(prev.updatedAtTimestamp !== curr.updatedAtTimestamp) {
-          items.push({
-            when: curr.updatedAtTimestamp,
-            label: `${curr.formType} ${curr.receiptNumber} updated`,
-            caseContext
-          });
-        }
         if(prev.closed !== curr.closed) {
           items.push({
             when: curr.updatedAtTimestamp || snapshot.at,
-            label: `${curr.formType} closed=${curr.closed}`,
+            label: `${formType} closed=${curr.closed}`,
             caseContext
           });
         }
@@ -2957,7 +3198,7 @@ function buildTimeline(){
           if(!prevEv.has(e.eventId)) {
             items.push({
               when: e.createdAtTimestamp,
-              label: `${curr.formType} new event ${e.eventCode}`,
+              label: `${formType} ${window.getEventDescription(e.eventCode)}`,
               caseContext
             });
           }
@@ -2967,11 +3208,21 @@ function buildTimeline(){
           if(!prevNo.has(n.letterId)) {
             items.push({
               when: n.generationDate,
-              label: `${curr.formType} new notice: ${n.actionType}`,
+              label: `${formType} ${n.actionType}`,
               caseContext
             });
           }
         });
+        // Only show "updated" if nothing else changed (no new events/notices/closed)
+        const newEvents = (curr.events||[]).filter(e => !prevEv.has(e.eventId));
+        const newNotices = (curr.notices||[]).filter(n => !new Set((prev.notices||[]).map(x => x.letterId)).has(n.letterId));
+        if(prev.updatedAtTimestamp !== curr.updatedAtTimestamp && newEvents.length === 0 && newNotices.length === 0 && prev.closed === curr.closed) {
+          items.push({
+            when: curr.updatedAtTimestamp,
+            label: `${formType} ${curr.receiptNumber} updated`,
+            caseContext
+          });
+        }
       }
     }
   }
@@ -3076,12 +3327,38 @@ function renderTimeline(){
     timelineContainer.innerHTML = '<div id="timeline" class="timeline" role="feed" aria-label="Case updates timeline"></div>';
   }
 
+  const cont2 = document.getElementById("timeline");
+
+  // Add "NEWEST" label at the top
+  const newestLabel = document.createElement("div");
+  newestLabel.className = "timeline-newest";
+  newestLabel.textContent = "NEWEST";
+  cont2.appendChild(newestLabel);
+
   const groups={};
   items.forEach(it=>{if(!groups[it.et.dateKey]) groups[it.et.dateKey]=[];groups[it.et.dateKey].push(it)});
   Object.keys(groups).sort((a,b)=>new Date(b)-new Date(a)).forEach(date=>{
     const g=document.createElement("div");g.className="tgroup";
-    const d=document.createElement("div");d.className="tdate";d.textContent=new Date(date).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});g.appendChild(d);
+const d=document.createElement("div");
+d.className="tdate";
+const [year, month, day] = date.split("-").map(Number);
+d.textContent = new Date(year, month - 1, day).toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric"
+});
+g.appendChild(d);
     groups[date].forEach(it=>{
+      // Wrapper holds the static dot+line and the sliding card
+      const row = document.createElement("div");
+      row.className = "titem-row";
+
+      // Static dot + tick (never moves)
+      const connector = document.createElement("div");
+      connector.className = "titem-connector";
+      connector.innerHTML = `<span class="titem-dot"></span><span class="titem-tick"></span>`;
+      row.appendChild(connector);
+
       const t=document.createElement("div");t.className="titem";
       // Extract event code if this is an event
       const eventMatch = it.label.match(/event ([A-Z0-9]+)/);
@@ -3115,9 +3392,10 @@ function renderTimeline(){
             JSON
           </button>
         </div>`;
-      g.appendChild(t);
+      row.appendChild(t);
+      g.appendChild(row);
     });
-    cont.appendChild(g);
+    cont2.appendChild(g);
   });
 }
 
@@ -3155,6 +3433,15 @@ function initializeCollapsedSections() {
     if (section && isCollapsed) {
       section.classList.add('collapsed');
     }
+  });
+}
+
+function formatDateKey(dateKey) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric"
   });
 }
 
@@ -3251,6 +3538,25 @@ renderReceipts();renderTimeline();initializeCollapsedSections();updateProgress()
     </p>
   </div>
 </footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const heroBanner = document.getElementById("heroBanner");
+  const heroToggleBtn = document.getElementById("heroToggleBtn");
+
+  // Restore saved state
+  if (localStorage.getItem("heroBannerCollapsed") === "true") {
+    heroBanner.classList.add("collapsed");
+    heroToggleBtn.setAttribute("aria-expanded", "false");
+  }
+
+  heroToggleBtn.addEventListener("click", () => {
+    const isCollapsed = heroBanner.classList.toggle("collapsed");
+    heroToggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+    localStorage.setItem("heroBannerCollapsed", String(isCollapsed));
+  });
+});
+</script>
 
 </body>
 </html>
