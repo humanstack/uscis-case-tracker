@@ -1187,6 +1187,27 @@
       line-height: 1.5;
     }
 
+    /* Year separator label */
+    .timeline-year {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      left: -2.5rem;
+      transform: translateX(-50%);
+      margin: calc(-1 * var(--space-xl)) 0 var(--space-lg);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 0.3rem 0.875rem;
+      white-space: nowrap;
+      line-height: 1.5;
+      box-shadow: var(--shadow-xs);
+    }
+
     .tgroup:last-child {
       margin-bottom: 0;
     }
@@ -1279,7 +1300,7 @@
       flex: 1;
       height: 1px;
       background: var(--accent-border);
-      transition: background var(--transition-normal);
+      margin-right: -3px; /* always cover the hover translateX gap */
     }
 
     .titem:hover {
@@ -1288,15 +1309,9 @@
       transform: translateX(3px);
     }
 
-    /* On hover extend tick and brighten dot glow — connector stays put */
+    /* On hover brighten dot glow — connector stays put */
     .titem-row:has(.titem:hover) .titem-dot {
       box-shadow: 0 0 0 4px hsl(var(--hue-primary) 90% 88%);
-    }
-
-    .titem-row:has(.titem:hover) .titem-tick {
-      background: var(--accent-border);
-      /* extend by 3px to fill the translateX gap */
-      margin-right: -3px;
     }
 
     .titem-content {
@@ -3337,17 +3352,41 @@ function renderTimeline(){
 
   const groups={};
   items.forEach(it=>{if(!groups[it.et.dateKey]) groups[it.et.dateKey]=[];groups[it.et.dateKey].push(it)});
-  Object.keys(groups).sort((a,b)=>new Date(b)-new Date(a)).forEach(date=>{
-    const g=document.createElement("div");g.className="tgroup";
-const d=document.createElement("div");
-d.className="tdate";
-const [year, month, day] = date.split("-").map(Number);
-d.textContent = new Date(year, month - 1, day).toLocaleDateString("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric"
-});
-g.appendChild(d);
+
+  const sortedDates = Object.keys(groups).sort((a,b)=>new Date(b)-new Date(a));
+  let currentYear = null;
+
+  sortedDates.forEach(date=>{
+    const [year, month, day] = date.split("-").map(Number);
+
+    const g = document.createElement("div");
+    g.className = "tgroup";
+
+    // Year pill — inject before first group of each new year (going newest→oldest)
+    if (year !== currentYear) {
+      currentYear = year;
+      // Show pill for years after the first one — label is the year we're crossing INTO
+      if (sortedDates.indexOf(date) > 0) {
+        const yearLabel = document.createElement("div");
+        yearLabel.className = "timeline-year";
+        // We're crossing from the previous year into this one going downward
+        // so label the year above (the one we just left)
+        const prevDate = sortedDates[sortedDates.indexOf(date) - 1];
+        const prevYear = prevDate.split("-")[0];
+        yearLabel.textContent = prevYear;
+        cont2.appendChild(yearLabel);
+      }
+    }
+
+    const d = document.createElement("div");
+    d.className = "tdate";
+    d.textContent = new Date(year, month - 1, day).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+    g.appendChild(d);
+
     groups[date].forEach(it=>{
       // Wrapper holds the static dot+line and the sliding card
       const row = document.createElement("div");
@@ -3360,17 +3399,10 @@ g.appendChild(d);
       row.appendChild(connector);
 
       const t=document.createElement("div");t.className="titem";
-      // Extract event code if this is an event
       const eventMatch = it.label.match(/event ([A-Z0-9]+)/);
       const eventCode = eventMatch ? eventMatch[1] : null;
-
-      // Get insight if this is an event
       const insight = eventCode ? getEventInsight(eventCode, it.caseContext.data, null) : null;
-
-      // Check if update was during business hours
       const businessHours = !afterHours(it.et);
-
-      // Check if this is a closed status update
       const isClosed = it.label.includes('closed=true');
 
       t.innerHTML = `
@@ -3397,6 +3429,15 @@ g.appendChild(d);
     });
     cont2.appendChild(g);
   });
+
+  // Start year pill at the very bottom
+  if (sortedDates.length > 0) {
+    const startYear = sortedDates[sortedDates.length - 1].split("-")[0];
+    const startLabel = document.createElement("div");
+    startLabel.className = "timeline-year";
+    startLabel.textContent = startYear;
+    cont2.appendChild(startLabel);
+  }
 }
 
 // Collapsible section functionality
