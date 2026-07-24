@@ -994,6 +994,15 @@
       border-top: 1px solid var(--border);
     }
 
+    .case-card-links {
+      margin-bottom: var(--space-md);
+    }
+
+    .case-card-link {
+      font-size: 0.75rem;
+      padding: var(--space-xs) var(--space-md);
+    }
+
     .case-card-meta-item {
       display: flex;
       flex-direction: column;
@@ -2053,7 +2062,16 @@ After clicking 'Open API tabs', you'll see a page with JSON data. Copy everythin
 
 <script>
 const USCIS_BASE="https://my.uscis.gov/account/case-service/api/cases/";
+const USCIS_CASE_STATUS_BASE="https://my.uscis.gov/account/case-service/api/case_status/I";
 const TZ="America/New_York";
+
+function buildCasesApiUrl(receiptNumber) {
+  return USCIS_BASE + encodeURIComponent(receiptNumber);
+}
+
+function buildCaseStatusApiUrl(receiptNumber) {
+  return USCIS_CASE_STATUS_BASE + encodeURIComponent(receiptNumber);
+}
 
 function loadReceipts(){return JSON.parse(localStorage.getItem("receipts")||"[]")}
 function saveReceipts(r){localStorage.setItem("receipts",JSON.stringify(r))}
@@ -2275,12 +2293,12 @@ document.getElementById("addReceiptBtn").onclick = () => {
 function openAllApiTabs() {
   const rec=loadReceipts();
   if(rec.length===0) return alert("Add receipts first");
-  rec.forEach((r,i)=>setTimeout(()=>window.open(USCIS_BASE+encodeURIComponent(r),"_blank"),i*300));
+  rec.forEach((r,i)=>setTimeout(()=>window.open(buildCasesApiUrl(r),"_blank"),i*300));
 }
 
 // open single API tab for a specific receipt
 function openSingleApiTab(receiptNumber) {
-  window.open(USCIS_BASE+encodeURIComponent(receiptNumber),"_blank");
+  window.open(buildCasesApiUrl(receiptNumber),"_blank");
 }
 
 document.getElementById("openTabsBtn").onclick = openAllApiTabs;
@@ -2594,7 +2612,7 @@ function addCaseFromModal() {
   updateProgress();
 
   // Open API tab
-  window.open(USCIS_BASE+encodeURIComponent(val),"_blank");
+  window.open(buildCasesApiUrl(val),"_blank");
 
   // Close modal
   closeAddCaseModal();
@@ -3005,6 +3023,7 @@ function renderCaseSummary() {
   Object.values(cases).forEach(caseData => {
     const latestSnapshot = caseData.history[caseData.history.length - 1];
     const data = latestSnapshot.data;
+    const caseStatusApiUrl = buildCaseStatusApiUrl(data.receiptNumber);
     const daysSinceSubmission = data.submissionTimestamp ? daysSince(data.submissionTimestamp) : null;
     const daysSinceUpdate = data.updatedAtTimestamp ? daysSince(data.updatedAtTimestamp) : null;
     const isCompleted = data.closed === true;
@@ -3023,6 +3042,9 @@ function renderCaseSummary() {
         }
       </div>
       <div class="case-card-status">${data.caseStatus || 'No status available'}</div>
+      <div class="case-card-links">
+        <a href="${caseStatusApiUrl}" target="_blank" rel="noopener" class="quick-link case-card-link">Open case_status API</a>
+      </div>
       <div class="case-card-meta">
         ${daysSinceSubmission !== null ? `
           <div class="case-card-meta-item">
