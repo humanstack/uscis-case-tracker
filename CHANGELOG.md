@@ -11,6 +11,7 @@ All notable changes to the USCIS Case Tracker will be documented in this file.
 - 🪗 "Get Case Data from USCIS" card is collapsible, with Open account / Paste JSON shortcuts when collapsed
 
 ### Changed
+- Footer is a single row of four columns with less height
 - Receipt chips look the same in the open and collapsed states of Step 1; Case / Status / Location and remove buttons appear on hover or keyboard focus (always on touch screens); remove asks for confirmation
 - Custom titles shown on receipt chips; chips ordered newest first like the cards
 - Removed the placeholder "No status available" line from case cards (the Case endpoint carries no status text; the Status row does)
