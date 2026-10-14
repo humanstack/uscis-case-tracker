@@ -5,7 +5,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://casetracker.xyz/sitemap.xml
+Sitemap: https://enase.github.io/uscis-case-tracker/sitemap.xml
 
 # Crawl delay (optional, helps prevent server overload)
 Crawl-delay: 1

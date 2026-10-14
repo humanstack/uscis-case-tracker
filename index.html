@@ -20,22 +20,22 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://humanstack.github.io/uscis-case-tracker/"/>
+  <meta property="og:url" content="https://enase.github.io/uscis-case-tracker/"/>
   <meta property="og:title" content="USCIS Case Tracker — Free Privacy-Focused Immigration Case Status Tracker"/>
   <meta property="og:description" content="Track your USCIS immigration case status with complete privacy. 100% client-side tracker with unified timeline, multiple case support, and automatic updates. No data sent to servers."/>
-  <meta property="og:image" content="https://humanstack.github.io/uscis-case-tracker/og-image.png"/>
+  <meta property="og:image" content="https://enase.github.io/uscis-case-tracker/og-image.png"/>
   <meta property="og:site_name" content="USCIS Case Tracker"/>
   <meta property="og:locale" content="en_US"/>
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image"/>
-  <meta property="twitter:url" content="https://humanstack.github.io/uscis-case-tracker/"/>
+  <meta property="twitter:url" content="https://enase.github.io/uscis-case-tracker/"/>
   <meta property="twitter:title" content="USCIS Case Tracker — Free Privacy-Focused Immigration Case Status Tracker"/>
   <meta property="twitter:description" content="Track your USCIS immigration case status with complete privacy. 100% client-side tracker with unified timeline and automatic updates."/>
-  <meta property="twitter:image" content="https://humanstack.github.io/uscis-case-tracker/twitter-image.png"/>
+  <meta property="twitter:image" content="https://enase.github.io/uscis-case-tracker/twitter-image.png"/>
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="https://humanstack.github.io/uscis-case-tracker/"/>
+  <link rel="canonical" href="https://enase.github.io/uscis-case-tracker/"/>
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json"/>
@@ -56,7 +56,7 @@
     "name": "USCIS Case Tracker",
     "alternateName": "Immigration Case Status Tracker",
     "description": "A privacy-focused USCIS immigration case tracker that runs entirely in your browser. Track multiple cases, view unified timeline, and monitor updates without sending any data to external servers.",
-    "url": "https://humanstack.github.io/uscis-case-tracker/",
+    "url": "https://enase.github.io/uscis-case-tracker/",
     "applicationCategory": "UtilityApplication",
     "operatingSystem": "Any",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
@@ -77,7 +77,7 @@
       "Reddit-friendly export",
       "Business hours detection"
     ],
-    "screenshot": "https://humanstack.github.io/uscis-case-tracker/screenshot.png",
+    "screenshot": "https://enase.github.io/uscis-case-tracker/screenshot.png",
     "softwareVersion": "1.0",
     "author": {
       "@type": "Organization",
@@ -137,7 +137,7 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "https://humanstack.github.io/uscis-case-tracker/"
+      "item": "https://enase.github.io/uscis-case-tracker/"
     }]
   }
   </script>
@@ -292,6 +292,10 @@
     }
 
     .card > *:not(.card-header):not(.card-body):not(.collapsed-content) {
+      padding: var(--space-xl);
+    }
+
+    .card-body {
       padding: var(--space-xl);
     }
 
@@ -559,6 +563,7 @@
     }
 
     .chip-container {
+      margin-top: var(--space-lg);
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-sm);
@@ -932,6 +937,18 @@
       margin-bottom: var(--space-xs);
     }
 
+    /* Step lists directly inside a card body line up with the callout above them */
+    .card-body > ol {
+      margin: var(--space-lg) 0 0;
+      padding-left: 0;
+      list-style-position: inside;
+      line-height: var(--line-height-relaxed);
+    }
+
+    .card-body > ol li {
+      margin-bottom: var(--space-xs);
+    }
+
     /* Case summary cards */
     .case-summary-grid {
       display: grid;
@@ -1274,8 +1291,13 @@
 
     .button-group {
       display: flex;
-      gap: var(--space-sm);
+      gap: var(--space-md);
       flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .button-group > * {
+      margin-right: 0;
     }
 
     .icon {
@@ -1427,6 +1449,129 @@
       font-size: 0.875rem;
     }
 
+    /* Profile (USCIS account) switcher */
+    .profile-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      padding: var(--space-md) var(--space-lg);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .profile-bar-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-right: var(--space-xs);
+    }
+
+    .profile-bar select {
+      flex: 1 1 10rem;
+      min-width: 8rem;
+    }
+
+    .profile-bar button {
+      margin-right: 0;
+    }
+
+    select {
+      padding: var(--space-sm) var(--space-md);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      font: inherit;
+      font-size: 0.9375rem;
+      color: var(--text);
+      background: white;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .profile-name-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-left: var(--space-xs);
+    }
+
+    /* Per-receipt endpoint buttons in the collapsed receipts view */
+    .chip-group {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-full);
+    }
+
+    .chip-group-name {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text);
+      padding: 0 var(--space-xs);
+    }
+
+    .quick-link-sm {
+      padding: var(--space-2xs) var(--space-md);
+      font-size: 0.75rem;
+      margin: 0;
+    }
+
+    .paste-kind-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+
+    /* Status / Location rows on case cards */
+    .case-card-extra {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-md);
+      font-size: 0.8125rem;
+    }
+
+    .case-card-extra-row {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .case-card-extra-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 4.5rem;
+    }
+
+    .case-card-extra-value {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .case-card-extra-sub {
+      color: var(--muted);
+    }
+
     /* Add case modal */
     #addCaseModal .modal-content {
       max-width: 36rem;
@@ -1495,6 +1640,10 @@
         padding: var(--space-lg);
       }
 
+      .card-body {
+        padding: var(--space-lg);
+      }
+
       .card.collapsible:not(.collapsed) .card-body {
         padding: var(--space-lg);
       }
@@ -1518,10 +1667,11 @@
         flex-direction: column;
       }
 
-      .button-group button {
+      .button-group button,
+      .button-group select {
         width: 100%;
         margin-right: 0;
-        margin-bottom: var(--space-sm);
+        margin-bottom: 0;
       }
 
       button {
@@ -1742,7 +1892,7 @@
     </svg>
     Private &amp; Secure
   </div>
-  <a href="https://github.com/humanstack/uscis-case-tracker" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="View USCIS Case Tracker source code on GitHub" title="Open source USCIS immigration case tracker">
+  <a href="https://github.com/Enase/uscis-case-tracker" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="View USCIS Case Tracker source code on GitHub" title="Open source USCIS immigration case tracker">
     <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" role="img" alt="GitHub logo">
       <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
     </svg>
@@ -1789,11 +1939,19 @@
     </div>
   </section>
 
+  <div class="profile-bar" role="group" aria-label="USCIS account profile">
+    <label for="profileSelect" class="profile-bar-label">USCIS account</label>
+    <select id="profileSelect" aria-label="Active profile"></select>
+    <button type="button" class="btn-compact" onclick="createProfilePrompt()" aria-label="Create a new profile">New</button>
+    <button type="button" class="btn-compact" onclick="renameProfilePrompt()" aria-label="Rename the active profile">Rename</button>
+    <button type="button" class="btn-compact" id="deleteProfileBtn" onclick="deleteProfilePrompt()" aria-label="Delete the active profile" style="border-color: var(--error-border); color: var(--error);">Delete</button>
+  </div>
+
   <section id="receiptsSection" class="card collapsible" aria-labelledby="receipts-title">
     <div class="card-header" onclick="toggleCollapse('receiptsSection')">
       <div class="step-header">
         <span class="step-indicator" id="step1Indicator">1</span>
-        <h2 id="receipts-title">Add Your Case Numbers</h2>
+        <h2 id="receipts-title">Add Your Case Numbers <span id="profileNameLabel" class="profile-name-label"></span></h2>
       </div>
       <svg class="collapse-icon icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -1846,16 +2004,25 @@
           </svg>
           Open API tabs
         </button>
+        <select id="openKind" aria-label="Which USCIS endpoint to open">
+          <option value="case">Case data</option>
+          <option value="status">Case status</option>
+          <option value="location">Location</option>
+          <option value="all">All three</option>
+        </select>
       </div>
       <div id="receiptChips" class="chip-container" role="list" aria-label="Added receipt numbers"></div>
     </div>
   </section>
 
   <section class="card" aria-labelledby="json-title" id="step2Section">
-    <div class="step-header">
-      <span class="step-indicator" id="step2Indicator">2</span>
-      <h2 id="json-title">Get Case Data from USCIS</h2>
+    <div class="card-header">
+      <div class="step-header">
+        <span class="step-indicator" id="step2Indicator">2</span>
+        <h2 id="json-title">Get Case Data from USCIS</h2>
+      </div>
     </div>
+    <div class="card-body">
     <div class="helper-callout" id="step2Helper">
       <svg class="helper-callout-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
@@ -1863,14 +2030,23 @@
       <div class="helper-callout-content">
         <div class="helper-callout-title">How to get your case data</div>
         <ol>
-          <li>Make sure you're logged into <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">myaccount.uscis.gov</a></li>
-          <li>Click "Open API tabs" above to open the official USCIS JSON endpoints</li>
+          <li>Make sure you're logged into <a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">myaccount.uscis.gov</a> as the USCIS account for <strong id="step2ProfileName">this profile</strong>. Switching accounts? <a href="https://myaccount.uscis.gov/sign-out" target="_blank" rel="noopener noreferrer">Sign out of USCIS</a> first.</li>
+          <li>Click "Open API tabs" above to open the official USCIS JSON endpoints (Case data, Case status, or Location)</li>
           <li>Copy all the JSON text from each tab (it looks like code)</li>
           <li>Paste it into the box below and click "Save Snapshot"</li>
         </ol>
       </div>
     </div>
     <div class="input-group">
+      <div class="paste-kind-row">
+        <label for="pasteKind">Data type</label>
+        <select id="pasteKind">
+          <option value="auto">Auto-detect</option>
+          <option value="case">Case data</option>
+          <option value="status">Case status</option>
+          <option value="location">Location</option>
+        </select>
+      </div>
       <label for="jsonText" class="sr-only">USCIS JSON Response</label>
       <textarea
         id="jsonText"
@@ -1889,6 +2065,7 @@ After clicking 'Open API tabs', you'll see a page with JSON data. Copy everythin
       </svg>
       Save Snapshot
     </button>
+    </div>
   </section>
 
   <section class="card" aria-labelledby="timeline-title">
@@ -2052,13 +2229,157 @@ After clicking 'Open API tabs', you'll see a page with JSON data. Copy everythin
 </button>
 
 <script>
-const USCIS_BASE="https://my.uscis.gov/account/case-service/api/cases/";
+const ENDPOINTS = {
+  case:     { label: "Case",     url: r => `https://my.uscis.gov/account/case-service/api/cases/${encodeURIComponent(r)}` },
+  status:   { label: "Status",   url: r => `https://my.uscis.gov/account/case-service/api/case_status/${encodeURIComponent(r)}` },
+  location: { label: "Location", url: r => `https://my.uscis.gov/secure-messaging/api/case-service/receipt_info/${encodeURIComponent(r)}` },
+};
+const HISTORY_KEY = { case: "history", status: "statusHistory", location: "locationHistory" };
 const TZ="America/New_York";
+let lastOpenedReceipt = null;
 
-function loadReceipts(){return JSON.parse(localStorage.getItem("receipts")||"[]")}
-function saveReceipts(r){localStorage.setItem("receipts",JSON.stringify(r))}
-function loadCases(){return JSON.parse(localStorage.getItem("cases")||"{}")}
-function saveCases(c){localStorage.setItem("cases",JSON.stringify(c))}
+// ---- storage helpers (scoped to the active profile) ----
+function readJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    const v = JSON.parse(raw);
+    return (v === null || v === undefined) ? fallback : v;
+  } catch (e) {
+    console.warn("Ignoring corrupted localStorage entry", key, e);
+    return fallback;
+  }
+}
+function writeJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+
+function loadProfiles() { const p = readJSON("profiles", []); return Array.isArray(p) ? p : []; }
+function saveProfiles(p) { writeJSON("profiles", p); }
+function activeProfileId() { return localStorage.getItem("activeProfileId"); }
+function activeProfile() { return loadProfiles().find(p => p.id === activeProfileId()) || null; }
+function newProfileId() { return "p_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+
+function loadReceiptsFor(pid) { const r = readJSON("receipts:" + pid, []); return Array.isArray(r) ? r : []; }
+function saveReceiptsFor(pid, r) { writeJSON("receipts:" + pid, r); }
+function loadCasesFor(pid) { const c = readJSON("cases:" + pid, {}); return (c && typeof c === "object" && !Array.isArray(c)) ? c : {}; }
+function saveCasesFor(pid, c) { writeJSON("cases:" + pid, c); }
+
+function loadReceipts() { return loadReceiptsFor(activeProfileId()); }
+function saveReceipts(r) { saveReceiptsFor(activeProfileId(), r); }
+function loadCases() { return loadCasesFor(activeProfileId()); }
+function saveCases(c) { saveCasesFor(activeProfileId(), c); }
+
+// One-time migration from the single-account layout. Idempotent.
+function migrateStorage() {
+  let profiles = loadProfiles();
+  if (profiles.length === 0) {
+    const id = newProfileId();
+    profiles = [{ id, name: "Default" }];
+    saveProfiles(profiles);
+    const oldReceipts = readJSON("receipts", null);
+    const oldCases = readJSON("cases", null);
+    if (oldReceipts) saveReceiptsFor(id, oldReceipts);
+    if (oldCases) saveCasesFor(id, oldCases);
+    localStorage.removeItem("receipts");
+    localStorage.removeItem("cases");
+    localStorage.setItem("activeProfileId", id);
+  }
+  if (!profiles.some(p => p.id === activeProfileId())) {
+    localStorage.setItem("activeProfileId", profiles[0].id);
+  }
+}
+
+function setActiveProfile(id) {
+  if (!loadProfiles().some(p => p.id === id)) return;
+  localStorage.setItem("activeProfileId", id);
+  renderProfileBar();
+  refreshAll();
+}
+function createProfile(name) {
+  const profiles = loadProfiles();
+  const id = newProfileId();
+  profiles.push({ id, name });
+  saveProfiles(profiles);
+  return id;
+}
+function renameProfile(id, name) {
+  const profiles = loadProfiles();
+  const p = profiles.find(x => x.id === id);
+  if (!p) return;
+  p.name = name;
+  saveProfiles(profiles);
+}
+function deleteProfile(id) {
+  const profiles = loadProfiles();
+  if (profiles.length <= 1) return false;
+  saveProfiles(profiles.filter(p => p.id !== id));
+  localStorage.removeItem("receipts:" + id);
+  localStorage.removeItem("cases:" + id);
+  if (activeProfileId() === id) localStorage.setItem("activeProfileId", loadProfiles()[0].id);
+  return true;
+}
+function findProfileForReceipt(receipt) {
+  for (const p of loadProfiles()) {
+    if (loadReceiptsFor(p.id).includes(receipt) ||
+        Object.prototype.hasOwnProperty.call(loadCasesFor(p.id), receipt)) return p;
+  }
+  return null;
+}
+
+// ---- profile bar UI ----
+function renderProfileBar() {
+  const select = document.getElementById("profileSelect");
+  const profiles = loadProfiles();
+  const active = activeProfileId();
+  select.innerHTML = "";
+  profiles.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = p.name;
+    if (p.id === active) opt.selected = true;
+    select.appendChild(opt);
+  });
+  const name = (activeProfile() || {}).name || "";
+  const label = document.getElementById("profileNameLabel");
+  if (label) label.textContent = name ? `\u00b7 ${name}` : "";
+  const step2Name = document.getElementById("step2ProfileName");
+  if (step2Name) step2Name.textContent = name || "this profile";
+  const delBtn = document.getElementById("deleteProfileBtn");
+  if (delBtn) delBtn.disabled = profiles.length <= 1;
+}
+function promptProfileName(initial) {
+  const name = prompt('Profile name (a label for this USCIS account, e.g. "Me" or "Spouse"):', initial || "");
+  if (name === null) return null;
+  const trimmed = name.trim();
+  if (!trimmed) { alert("Profile name cannot be empty."); return null; }
+  return trimmed.slice(0, 40);
+}
+function createProfilePrompt() {
+  const name = promptProfileName("");
+  if (!name) return;
+  setActiveProfile(createProfile(name));
+}
+function renameProfilePrompt() {
+  const p = activeProfile();
+  if (!p) return;
+  const name = promptProfileName(p.name);
+  if (!name) return;
+  renameProfile(p.id, name);
+  renderProfileBar();
+}
+function deleteProfilePrompt() {
+  const p = activeProfile();
+  if (!p) return;
+  if (loadProfiles().length <= 1) { alert('You cannot delete the last profile. Use "Clear data" instead.'); return; }
+  if (!confirm(`Delete profile "${p.name}" and all of its receipts and snapshots? This cannot be undone.`)) return;
+  deleteProfile(p.id);
+  renderProfileBar();
+  refreshAll();
+}
+function refreshAll() { renderReceipts(); renderTimeline(); updateProgress(); }
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
 
 // Validate receipt number format
 function isValidReceipt(receipt) {
@@ -2122,7 +2443,7 @@ function updateProgress() {
     const step2Section = document.getElementById('step2Section');
 
     // Auto-collapse About and Step 1 if not manually interacted with
-    const savedStates = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+    const savedStates = readJSON('collapsedSections', {});
     if (savedStates.aboutSection === undefined && aboutSection && !aboutSection.classList.contains('collapsed')) {
       aboutSection.classList.add('collapsed');
     }
@@ -2164,13 +2485,16 @@ function updateQuickStats(cases) {
   let totalUpdates = 0;
 
   Object.values(cases).forEach(caseData => {
-    const latestData = caseData.history[caseData.history.length - 1].data;
-    if (latestData.closed === true) {
+    const history = Array.isArray(caseData.history) ? caseData.history : [];
+    const latestData = history.length ? history[history.length - 1].data : {};
+    if (latestData && latestData.closed === true) {
       completed++;
     } else {
       inProgress++;
     }
-    totalUpdates += caseData.history.length;
+    totalUpdates += history.length +
+      (Array.isArray(caseData.statusHistory) ? caseData.statusHistory.length : 0) +
+      (Array.isArray(caseData.locationHistory) ? caseData.locationHistory.length : 0);
   });
 
   document.getElementById('statTotalCases').textContent = totalCases;
@@ -2214,21 +2538,25 @@ function renderReceipts() {
     chip.appendChild(deleteBtn);
     cont.appendChild(chip);
 
-    // Render for collapsed view with API link
-    const collapsedChip = document.createElement("button");
-    collapsedChip.className = "quick-link";
-    collapsedChip.style.cursor = "pointer";
-    collapsedChip.setAttribute("aria-label", `Open API tab for ${r}`);
-    collapsedChip.onclick = () => openSingleApiTab(r);
-
-    collapsedChip.innerHTML = `
-      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-        <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-      </svg>
-      ${r}
-    `;
-    collapsedCont.appendChild(collapsedChip);
+    // Render for collapsed view: one button per USCIS endpoint
+    const group = document.createElement("div");
+    group.className = "chip-group";
+    group.setAttribute("role", "group");
+    group.setAttribute("aria-label", `Open API tabs for ${r}`);
+    const name = document.createElement("span");
+    name.className = "chip-group-name";
+    name.textContent = r;
+    group.appendChild(name);
+    Object.entries(ENDPOINTS).forEach(([kind, ep]) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "quick-link quick-link-sm";
+      b.textContent = ep.label;
+      b.setAttribute("aria-label", `Open ${ep.label} API tab for ${r}`);
+      b.onclick = () => openSingleApiTab(r, kind);
+      group.appendChild(b);
+    });
+    collapsedCont.appendChild(group);
   });
 
   updateProgress();
@@ -2272,15 +2600,27 @@ document.getElementById("addReceiptBtn").onclick = () => {
 };
 
 // open multiple tabs staggered
+function openApiTabs(receipts, kinds) {
+  let i = 0;
+  receipts.forEach(r => kinds.forEach(kind => {
+    setTimeout(() => window.open(ENDPOINTS[kind].url(r), "_blank"), i * 300);
+    i++;
+  }));
+  if (receipts.length === 1) lastOpenedReceipt = receipts[0];
+}
+
 function openAllApiTabs() {
-  const rec=loadReceipts();
-  if(rec.length===0) return alert("Add receipts first");
-  rec.forEach((r,i)=>setTimeout(()=>window.open(USCIS_BASE+encodeURIComponent(r),"_blank"),i*300));
+  const rec = loadReceipts();
+  if (rec.length === 0) return alert("Add receipts first");
+  const sel = document.getElementById("openKind");
+  const kind = sel ? sel.value : "case";
+  openApiTabs(rec, kind === "all" ? Object.keys(ENDPOINTS) : [kind]);
 }
 
 // open single API tab for a specific receipt
-function openSingleApiTab(receiptNumber) {
-  window.open(USCIS_BASE+encodeURIComponent(receiptNumber),"_blank");
+function openSingleApiTab(receiptNumber, kind = "case") {
+  lastOpenedReceipt = receiptNumber;
+  window.open(ENDPOINTS[kind].url(receiptNumber), "_blank");
 }
 
 document.getElementById("openTabsBtn").onclick = openAllApiTabs;
@@ -2348,13 +2688,14 @@ function viewJSON(encodedData) {
     const context = JSON.parse(decodeURIComponent(encodedData));
 
     // Extract data and metadata
-    let data, receiptNumber, snapshotIndex;
+    let data, receiptNumber, snapshotIndex, kind = "case";
 
     if (context.caseContext) {
       // New format with caseContext
       data = context.caseContext.data;
       receiptNumber = context.caseContext.receiptNumber;
       snapshotIndex = context.caseContext.snapshotIndex;
+      kind = HISTORY_KEY[context.caseContext.kind] ? context.caseContext.kind : "case";
     } else {
       // Old format or direct data
       data = context;
@@ -2363,12 +2704,15 @@ function viewJSON(encodedData) {
 
     // Display the JSON data
     viewer.textContent = JSON.stringify(data, null, 2);
+    const title = document.getElementById("modal-title");
+    if (title) title.textContent = `${ENDPOINTS[kind].label} Data${receiptNumber ? " \u00b7 " + receiptNumber : ""}`;
 
     // Find previous snapshot for diff if we have context
     if (receiptNumber && typeof snapshotIndex === 'number') {
       const cases = loadCases();
-      if (cases[receiptNumber] && snapshotIndex > 0) {
-        const prevData = cases[receiptNumber].history[snapshotIndex - 1].data;
+      const hist = cases[receiptNumber] && cases[receiptNumber][HISTORY_KEY[kind]];
+      if (Array.isArray(hist) && snapshotIndex > 0 && hist[snapshotIndex - 1]) {
+        const prevData = hist[snapshotIndex - 1].data;
         const changes = computeJsonDiff(prevData, data);
         renderDiff(changes);
         diffTab.style.display = 'block';
@@ -2594,7 +2938,7 @@ function addCaseFromModal() {
   updateProgress();
 
   // Open API tab
-  window.open(USCIS_BASE+encodeURIComponent(val),"_blank");
+  openSingleApiTab(val, "case");
 
   // Close modal
   closeAddCaseModal();
@@ -2608,21 +2952,21 @@ document.getElementById("addCaseModal").onclick = (e) => {
   if (e.target === e.currentTarget) closeAddCaseModal();
 };
 
-// Clear all data
+// Clear all data for the active profile only
 function clearAllData() {
-  if (!confirm("Are you sure you want to delete all receipts and case data? This cannot be undone.")) {
+  const p = activeProfile();
+  const name = p ? p.name : "this profile";
+  if (!confirm(`Delete all receipts and case data for profile "${name}"? Other profiles are not affected. This cannot be undone.`)) {
     return;
   }
 
-  localStorage.removeItem("receipts");
-  localStorage.removeItem("cases");
-  localStorage.removeItem("collapsedSections");
+  const pid = activeProfileId();
+  localStorage.removeItem("receipts:" + pid);
+  localStorage.removeItem("cases:" + pid);
 
-  renderReceipts();
-  renderTimeline();
-  updateProgress();
+  refreshAll();
 
-  alert("All data has been cleared.");
+  alert(`All data for "${name}" has been cleared.`);
   location.reload();
 }
 
@@ -2735,65 +3079,164 @@ function isErrorResponse(data) {
   return false;
 }
 
-// save pasted JSON
+// ---- payload classification helpers ----
+function detectPayloadKind(payload) {
+  if (!payload || typeof payload !== "object") return null;
+  const d = payload.data;
+  if (!d || typeof d !== "object" || Array.isArray(d)) return null; // null data is ambiguous: needs an explicit type
+  if (Array.isArray(d.events) || Array.isArray(d.notices) || "formType" in d) return "case";
+  if ("location" in d || "subtype" in d) return "location";
+  const statusKeys = ["caseStatus", "caseStatusText", "statusText", "status", "modifiedDate", "actionDescription", "currentCaseStatusTextEn"];
+  if (statusKeys.some(k => k in d)) return "status";
+  if ("receiptNumber" in d) return "status";
+  return null;
+}
+
+function stripVolatile(data) {
+  if (!data || typeof data !== "object") return data;
+  const copy = { ...data };
+  delete copy.updatedAt;
+  delete copy.updatedAtTimestamp;
+  return copy;
+}
+
+function summarizeStatus(data) {
+  if (!data || typeof data !== "object") return "updated";
+  for (const k of ["caseStatusText", "statusText", "caseStatus", "currentCaseStatusTextEn", "status", "actionDescription"]) {
+    const v = data[k];
+    if (typeof v === "string" && v.trim()) return v.trim();
+  }
+  return "updated";
+}
+
+function summarizeLocation(data) {
+  if (!data || typeof data !== "object") return "Original service center";
+  const loc = data.location ?? data.locationCode ?? data.office;
+  if (loc === null || loc === undefined || loc === "") return "Original service center";
+  return typeof loc === "string" ? loc : JSON.stringify(loc);
+}
+
+function extractReceipt(payload) {
+  const d = payload && payload.data;
+  const candidates = [d && d.receiptNumber, d && d.receipt_number, payload && payload.receiptNumber];
+  for (const c of candidates) {
+    if (typeof c === "string" && isValidReceipt(c.toUpperCase())) return c.toUpperCase();
+  }
+  return null;
+}
+
+function firstValidDate(candidates) {
+  for (const c of candidates) {
+    if (c === undefined || c === null || c === "") continue;
+    if (!isNaN(new Date(c))) return c;
+  }
+  return new Date().toISOString();
+}
+
+const LOGIN_HELP = `Unable to read case data. This usually means you're not logged in to USCIS.\n\n` +
+  `Please follow these steps:\n` +
+  `1. Open a new tab and go to myaccount.uscis.gov\n` +
+  `2. Sign in with the USCIS account for the active profile\n` +
+  `3. Come back here and try again\n\n` +
+  `If you're already logged in, try logging out and back in.`;
+
+// save pasted JSON (Case data, Case status, or Location)
 document.getElementById("saveJsonBtn").onclick = () => {
   const raw = document.getElementById("jsonText").value.trim();
   if (!raw) return;
 
-  let data;
+  let payload;
   try {
-    data = JSON.parse(raw);
+    payload = JSON.parse(raw);
   } catch(e) {
     alert("Invalid JSON format. Please make sure you copied the entire response.");
     return;
   }
-
-  // Check for error response
-  if (isErrorResponse(data)) {
-    const message = `Unable to read case data. This usually means you're not logged in to USCIS.\n\n` +
-                   `Please follow these steps:\n` +
-                   `1. Open a new tab and go to myaccount.uscis.gov\n` +
-                   `2. Sign in with your USCIS account\n` +
-                   `3. Come back here and try again\n\n` +
-                   `If you're already logged in, try logging out and back in.`;
-    alert(message);
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    alert("Invalid response format. The JSON must be an object with a \"data\" field.");
+    return;
+  }
+  if (payload.error && !payload.data) {
+    alert(LOGIN_HELP);
+    return;
+  }
+  if (!("data" in payload)) {
+    alert("Invalid response format. The JSON must contain a \"data\" field.");
     return;
   }
 
-  if (!data.data || !data.data.receiptNumber) {
+  const kindSel = document.getElementById("pasteKind");
+  const kind = (kindSel && kindSel.value !== "auto") ? kindSel.value : detectPayloadKind(payload);
+  if (!kind || !HISTORY_KEY[kind]) {
+    alert("Could not tell which USCIS endpoint this JSON came from. Choose the data type (Case data, Case status, or Location) above the box and try again.");
+    return;
+  }
+  const data = payload.data;
+
+  if (kind !== "location" && data === null) {
+    alert(LOGIN_HELP);
+    return;
+  }
+  if (kind === "case" && (!data || !data.receiptNumber)) {
     alert("Invalid response format. The JSON must contain case data with a receipt number.");
     return;
   }
 
-  const r = data.data.receiptNumber;
-  const cases = loadCases();
-
-  // Check if this is a new receipt number
-  if (!cases[r]) {
-    cases[r] = {
-      receiptNumber: r,
-      formType: data.data.formType,
-      history: []
-    };
+  let r = extractReceipt(payload);
+  if (!r) {
+    const typed = prompt(`This ${ENDPOINTS[kind].label} response does not include a receipt number. Which receipt is it for?`, lastOpenedReceipt || "");
+    if (typed === null) return;
+    r = typed.trim().toUpperCase();
+    if (!isValidReceipt(r)) {
+      alert("Please enter 3 letters followed by 10 numbers");
+      return;
+    }
   }
-  // Check if this is new data
-  else if (cases[r].history.length > 0) {
-    const lastSnapshot = cases[r].history[cases[r].history.length - 1].data;
-    if (!hasJsonChanged(lastSnapshot, data.data)) {
-      alert("No changes detected for " + r + " since last snapshot");
+
+  // Route to the profile that owns this receipt
+  let pid = activeProfileId();
+  const owner = findProfileForReceipt(r);
+  if (owner && owner.id !== pid) {
+    const current = activeProfile();
+    if (confirm(`Receipt ${r} belongs to profile "${owner.name}", not "${current ? current.name : "the active profile"}". Save this snapshot under "${owner.name}" instead?`)) {
+      pid = owner.id;
+    }
+  }
+  const receipts = loadReceiptsFor(pid);
+  if (!receipts.includes(r)) {
+    receipts.push(r);
+    saveReceiptsFor(pid, receipts);
+  }
+
+  const cases = loadCasesFor(pid);
+  if (!cases[r]) {
+    cases[r] = { receiptNumber: r, formType: undefined, history: [], statusHistory: [], locationHistory: [] };
+  }
+  const rec = cases[r];
+  const hk = HISTORY_KEY[kind];
+  if (!Array.isArray(rec[hk])) rec[hk] = [];
+  if (kind === "case" && data.formType) rec.formType = data.formType;
+
+  if (rec[hk].length > 0) {
+    const last = rec[hk][rec[hk].length - 1].data;
+    const same = kind === "case"
+      ? !hasJsonChanged(last, data)
+      : JSON.stringify(stripVolatile(last)) === JSON.stringify(stripVolatile(data));
+    if (same) {
+      alert(`No ${ENDPOINTS[kind].label.toLowerCase()} changes detected for ${r} since last snapshot`);
       document.getElementById("jsonText").value = "";
       return;
     }
   }
 
-  // Save new snapshot
-  cases[r].history.push({
-    at: new Date().toISOString(),
-    data: data.data
-  });
-  saveCases(cases);
-  renderTimeline();
-  updateProgress();
+  rec[hk].push({ at: new Date().toISOString(), data });
+  saveCasesFor(pid, cases);
+
+  if (pid !== activeProfileId()) {
+    if (confirm(`Saved under "${owner.name}". Switch to that profile now?`)) setActiveProfile(pid);
+  } else {
+    refreshAll();
+  }
 
   // Clear input and show success
   document.getElementById("jsonText").value = "";
@@ -2889,8 +3332,7 @@ function buildTimeline(){
   const items = [];
 
   for(const c of Object.values(cases)){
-    const hist = c.history;
-    if(!hist) continue;
+    const hist = Array.isArray(c.history) ? c.history : [];
 
     for(let i = 0; i < hist.length; i++){
       const curr = hist[i].data;
@@ -2899,6 +3341,7 @@ function buildTimeline(){
 
       // Store the full case context for diff viewing
       const caseContext = {
+        kind: "case",
         receiptNumber: curr.receiptNumber,
         snapshotIndex: i,
         data: curr
@@ -2976,9 +3419,47 @@ function buildTimeline(){
     }
   }
 
-  items.forEach(it => {it.et = toET(it.when);});
+  addStatusAndLocationItems(items, cases);
+
+  items.forEach(it => {it.et = toET(it.when) || toET(new Date().toISOString());});
   items.sort((a,b) => new Date(b.when) - new Date(a.when));
   return items;
+}
+
+// Timeline items from the Case status and Location endpoints
+function addStatusAndLocationItems(items, cases) {
+  for (const c of Object.values(cases)) {
+    const form = c.formType || "Case";
+    const r = c.receiptNumber;
+
+    const statusHist = Array.isArray(c.statusHistory) ? c.statusHistory : [];
+    let prevSummary = null;
+    statusHist.forEach((snap, i) => {
+      const summary = summarizeStatus(snap.data);
+      if (i > 0 && summary === prevSummary) return;
+      const d = snap.data || {};
+      items.push({
+        when: firstValidDate([d.modifiedDate, d.updatedAt, d.updatedAtTimestamp, snap.at]),
+        label: i === 0 ? `${form} ${r} status: ${summary}` : `${form} ${r} status changed: ${summary}`,
+        caseContext: { kind: "status", receiptNumber: r, snapshotIndex: i, data: snap.data }
+      });
+      prevSummary = summary;
+    });
+
+    const locHist = Array.isArray(c.locationHistory) ? c.locationHistory : [];
+    let prevLoc = null;
+    locHist.forEach((snap, i) => {
+      const loc = summarizeLocation(snap.data);
+      if (i > 0 && loc === prevLoc) return;
+      const d = snap.data || {};
+      items.push({
+        when: firstValidDate([d.updatedAt, d.updatedAtTimestamp, snap.at]),
+        label: i === 0 ? `${form} ${r} location: ${loc}` : `${form} ${r} moved to ${loc}`,
+        caseContext: { kind: "location", receiptNumber: r, snapshotIndex: i, data: snap.data }
+      });
+      prevLoc = loc;
+    });
+  }
 }
 
 // Calculate days since date
@@ -3003,8 +3484,9 @@ function renderCaseSummary() {
   summaryContainer.innerHTML = '';
 
   Object.values(cases).forEach(caseData => {
-    const latestSnapshot = caseData.history[caseData.history.length - 1];
-    const data = latestSnapshot.data;
+    const history = Array.isArray(caseData.history) ? caseData.history : [];
+    const latestSnapshot = history[history.length - 1];
+    const data = latestSnapshot ? latestSnapshot.data : { receiptNumber: caseData.receiptNumber, formType: caseData.formType };
     const daysSinceSubmission = data.submissionTimestamp ? daysSince(data.submissionTimestamp) : null;
     const daysSinceUpdate = data.updatedAtTimestamp ? daysSince(data.updatedAtTimestamp) : null;
     const isCompleted = data.closed === true;
@@ -3013,8 +3495,8 @@ function renderCaseSummary() {
     card.className = 'case-card';
     card.innerHTML = `
       <div class="case-card-header">
-        <div class="case-card-receipt">${data.receiptNumber}</div>
-        <div class="case-card-form">${data.formType || 'N/A'}</div>
+        <div class="case-card-receipt">${escapeHtml(caseData.receiptNumber || data.receiptNumber || '')}</div>
+        <div class="case-card-form">${escapeHtml(data.formType || 'N/A')}</div>
       </div>
       <div class="case-card-status">
         ${isCompleted ?
@@ -3022,7 +3504,7 @@ function renderCaseSummary() {
           '<span class="status-badge active">● In Progress</span>'
         }
       </div>
-      <div class="case-card-status">${data.caseStatus || 'No status available'}</div>
+      <div class="case-card-status">${escapeHtml(data.caseStatus || 'No status available')}</div>
       <div class="case-card-meta">
         ${daysSinceSubmission !== null ? `
           <div class="case-card-meta-item">
@@ -3038,10 +3520,37 @@ function renderCaseSummary() {
         ` : ''}
         <div class="case-card-meta-item">
           <span class="case-card-meta-label">Snapshots</span>
-          <span class="case-card-meta-value">${caseData.history.length}</span>
+          <span class="case-card-meta-value">${history.length}</span>
         </div>
       </div>
     `;
+
+    // Status / Location rows (textContent, never interpolated)
+    const extra = document.createElement('div');
+    extra.className = 'case-card-extra';
+    const addRow = (label, value, sub) => {
+      const row = document.createElement('div');
+      row.className = 'case-card-extra-row';
+      const l = document.createElement('span'); l.className = 'case-card-extra-label'; l.textContent = label;
+      const v = document.createElement('span'); v.className = 'case-card-extra-value'; v.textContent = value;
+      row.appendChild(l); row.appendChild(v);
+      if (sub) { const s = document.createElement('span'); s.className = 'case-card-extra-sub'; s.textContent = sub; row.appendChild(s); }
+      extra.appendChild(row);
+    };
+    const statusHist = Array.isArray(caseData.statusHistory) ? caseData.statusHistory : [];
+    const lastStatus = statusHist[statusHist.length - 1];
+    const sd = lastStatus ? (lastStatus.data || {}) : null;
+    addRow('Status',
+      lastStatus ? summarizeStatus(lastStatus.data) : '\u2014',
+      lastStatus ? `${daysSince(firstValidDate([sd.modifiedDate, sd.updatedAt, sd.updatedAtTimestamp, lastStatus.at]))}d ago` : 'no snapshot yet');
+    const locHist = Array.isArray(caseData.locationHistory) ? caseData.locationHistory : [];
+    const lastLoc = locHist[locHist.length - 1];
+    const ld = lastLoc ? (lastLoc.data || {}) : null;
+    addRow('Location',
+      lastLoc ? summarizeLocation(lastLoc.data) : '\u2014',
+      lastLoc ? `${daysSince(firstValidDate([ld.updatedAt, ld.updatedAtTimestamp, lastLoc.at]))}d ago` : 'no snapshot yet');
+    card.insertBefore(extra, card.querySelector('.case-card-meta'));
+
     summaryContainer.appendChild(card);
   });
 }
@@ -3049,9 +3558,7 @@ function renderCaseSummary() {
 // render timeline
 function renderTimeline(){
   const items=buildTimeline();
-  const cont=document.getElementById("timeline");
   const timelineContainer=document.getElementById("timelineContainer");
-  cont.innerHTML="";
 
   // Render case summary cards
   renderCaseSummary();
@@ -3071,10 +3578,12 @@ function renderTimeline(){
     return;
   }
 
-  // Restore timeline container
+  // Restore timeline container (the empty state above replaces it)
   if (!document.getElementById('timeline')) {
     timelineContainer.innerHTML = '<div id="timeline" class="timeline" role="feed" aria-label="Case updates timeline"></div>';
   }
+  const cont=document.getElementById("timeline");
+  cont.innerHTML="";
 
   const groups={};
   items.forEach(it=>{if(!groups[it.et.dateKey]) groups[it.et.dateKey]=[];groups[it.et.dateKey].push(it)});
@@ -3101,14 +3610,14 @@ function renderTimeline(){
           <div>
             <div class="titem-time">${it.et.text}</div>
             <div class="titem-main">
-              <span class="titem-label">${it.label.replace('closed=true', 'Case completed ✨').replace('closed=false', '')}</span>
+              <span class="titem-label">${escapeHtml(it.label.replace('closed=true', 'Case completed ✨').replace('closed=false', ''))}</span>
               ${businessHours ? '<span class="flag officer">👋 Officer</span>' : '<span class="flag system">⚙️ System</span>'}
               ${isClosed ? '<span class="flag completed">🎉 Complete</span>' : ''}
             </div>
-            ${insight ? `<div class="insight ${insight.type}">${insight.message}</div>` : ''}
+            ${insight ? `<div class="insight ${insight.type}">${escapeHtml(insight.message)}</div>` : ''}
             ${isClosed ? `<div class="insight success">Congratulations! Your case has been completed.</div>` : ''}
           </div>
-          <button class="view-json" onclick="viewJSON('${encodeURIComponent(JSON.stringify({ caseContext: it.caseContext }))}')" aria-label="View JSON data">
+          <button class="view-json" onclick="viewJSON('${encodeURIComponent(JSON.stringify({ caseContext: it.caseContext })).replace(/'/g, '%27')}')" aria-label="View JSON data">
             <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path fill-rule="evenodd" d="M4.25 2A2.25 2.25 0 002 4.25v11.5A2.25 2.25 0 004.25 18h11.5A2.25 2.25 0 0018 15.75V4.25A2.25 2.25 0 0015.75 2H4.25zm4.03 6.28a.75.75 0 00-1.06-1.06L4.97 9.47a.75.75 0 000 1.06l2.25 2.25a.75.75 0 001.06-1.06L6.56 10l1.72-1.72zm4.5-1.06a.75.75 0 10-1.06 1.06L13.44 10l-1.72 1.72a.75.75 0 101.06 1.06l2.25-2.25a.75.75 0 000-1.06l-2.25-2.25z" clip-rule="evenodd"/>
             </svg>
@@ -3127,7 +3636,7 @@ function toggleCollapse(sectionId) {
   section.classList.toggle('collapsed');
 
   // Save collapsed state to localStorage
-  const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+  const collapsedSections = readJSON('collapsedSections', {});
   collapsedSections[sectionId] = section.classList.contains('collapsed');
   localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
 }
@@ -3137,7 +3646,7 @@ function initializeCollapsedSections() {
   const hasCases = Object.keys(cases).length > 0;
 
   // Get saved collapsed states
-  const savedCollapsedStates = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+  const savedCollapsedStates = readJSON('collapsedSections', {});
 
   // Auto-collapse sections if user has cases (unless user has manually expanded them)
   if (hasCases) {
@@ -3158,7 +3667,11 @@ function initializeCollapsedSections() {
   });
 }
 
-renderReceipts();renderTimeline();initializeCollapsedSections();updateProgress();
+migrateStorage();
+renderProfileBar();
+document.getElementById("profileSelect").onchange = e => setActiveProfile(e.target.value);
+refreshAll();
+initializeCollapsedSections();
 </script>
 
 <footer>
@@ -3198,9 +3711,9 @@ renderReceipts();renderTimeline();initializeCollapsedSections();updateProgress()
       <h3>Resources</h3>
       <ul>
         <li><a href="https://myaccount.uscis.gov/sign-in" target="_blank" rel="noopener">USCIS My Account</a></li>
-        <li><a href="https://github.com/humanstack/uscis-case-tracker" target="_blank" rel="noopener noreferrer">View on GitHub</a></li>
-        <li><a href="https://github.com/humanstack/uscis-case-tracker/issues" target="_blank" rel="noopener noreferrer">Report Issues</a></li>
-        <li><a href="https://github.com/humanstack/uscis-case-tracker/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+        <li><a href="https://github.com/Enase/uscis-case-tracker" target="_blank" rel="noopener noreferrer">View on GitHub</a></li>
+        <li><a href="https://github.com/Enase/uscis-case-tracker/issues" target="_blank" rel="noopener noreferrer">Report Issues</a></li>
+        <li><a href="https://github.com/Enase/uscis-case-tracker/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a></li>
       </ul>
     </div>
   </div>

@@ -6,7 +6,7 @@
 
 A free, open-source, privacy-focused USCIS case tracking tool that runs entirely in your browser. Track multiple immigration cases (I-485, I-765, I-131, and more), view unified timelines, and monitor updates without sending any data to external servers.
 
-**🔗 Live Demo:** [https://humanstack.github.io/uscis-case-tracker/](https://humanstack.github.io/uscis-case-tracker/)
+**🔗 Live Demo:** [https://enase.github.io/uscis-case-tracker/](https://enase.github.io/uscis-case-tracker/)
 
 ## Why Use This USCIS Tracker?
 
@@ -72,6 +72,24 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
    - Track officer interactions (👋)
    - Monitor system updates (⚙️)
    - Celebrate completions (🎉)
+
+### Multiple USCIS Accounts
+
+The tracker supports **profiles**, one per USCIS login (for example "Me" and "Spouse"). Use the **USCIS account** bar at the top to create, rename, delete, or switch profiles. Each profile has its own receipts, snapshots, timeline, stats, and Reddit export. Profiles are labels only; no USCIS credentials are stored.
+
+Before opening API tabs for a profile, make sure you are signed in to USCIS as that account. To switch accounts, sign out of USCIS first (there is a link in Step 2). If you paste JSON for a receipt that belongs to another profile, the tracker offers to save it there.
+
+### Case Status and Location Data
+
+Besides the main case endpoint, each receipt has two more USCIS endpoints you can snapshot the same way (open the tab while signed in, copy the JSON, paste it in Step 2):
+
+| Data | URL pattern | What it shows |
+|------|-------------|---------------|
+| Case data | `https://my.uscis.gov/account/case-service/api/cases/<receipt>` | Events, notices, timestamps |
+| Case status | `https://my.uscis.gov/account/case-service/api/case_status/<receipt>` | Current status text |
+| Location | `https://my.uscis.gov/secure-messaging/api/case-service/receipt_info/<receipt>` | Service center or field office handling the case (`null` means it is still at the center on your receipt notice) |
+
+Each receipt chip has **Case**, **Status**, and **Location** buttons, and the "Open API tabs" button has a selector for which endpoint (or all three) to open. The paste box auto-detects which endpoint the JSON came from; if it cannot, pick the data type manually. Status and location changes appear on the timeline and on the case cards.
 
 ## Understanding Updates
 

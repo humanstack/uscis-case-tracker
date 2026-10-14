@@ -2,6 +2,26 @@
 
 All notable changes to the USCIS Case Tracker will be documented in this file.
 
+## [1.1.0] - 2026-10-14
+
+### Added
+- 👥 Profiles: track cases from several USCIS accounts, each with its own receipts, timeline, stats, and export
+- 📍 Location tracking via the `receipt_info` endpoint (service center / field office changes on the timeline and cards)
+- 📝 Case status tracking via the `case_status` endpoint
+- 🔗 Per-receipt Case / Status / Location buttons and an endpoint selector for "Open API tabs"
+- 🧭 Auto-detection of which endpoint pasted JSON came from, with a manual override
+- 🚦 Pasting JSON for a receipt owned by another profile offers to file it there
+- 🚪 "Sign out of USCIS" link for switching accounts
+
+### Changed
+- "Clear data" now clears only the active profile
+- Existing data is migrated into a "Default" profile automatically
+
+### Fixed
+- Timeline crashed when rendering again after the empty state (first paste required a reload)
+- Corrupted localStorage entries no longer break page load
+- Pasted USCIS text is HTML-escaped in the timeline and cards; "View JSON" works when values contain apostrophes
+
 ## [1.0.0] - 2026-01-23
 
 ### Added
