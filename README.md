@@ -27,10 +27,13 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 - No tracking, no analytics
 
 ### 📋 Case Management
-- Track multiple USCIS cases
-- Unified timeline across all cases
-- Automatic date grouping
+- Track multiple USCIS cases across several USCIS accounts (profiles)
+- One-click import of every case from your USCIS account page
+- Custom case titles, receipt dates, newest-first ordering
+- Completed cases hidden by default, one click to show them
+- Unified timeline across all cases, every item linked to its case card
 - Receipt number masking for sharing
+- Backup and restore all data as a file to move between browsers or devices
 
 ### 🔍 Smart Insights
 - Identifies system vs. officer updates
@@ -41,14 +44,15 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 ### 📊 Timeline Analysis
 - View JSON data for each update
 - Compare changes between updates
-- Track case progression
-- Monitor status changes
+- Track case progression, status text and service-center transfers
+- Items dated from the USCIS data itself, never from when you imported it
 
 ### 💡 Smart Features
 - Business hours detection
 - Automatic timezone conversion
 - Reddit-friendly export
 - Receipt number validation
+- Compact snapshot storage with a live storage meter
 
 ## How to Use
 
@@ -75,9 +79,9 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 
 ### Multiple USCIS Accounts
 
-The tracker supports **profiles**, one per USCIS login (for example "Me" and "Spouse"). Use the **USCIS account** bar at the top to create, rename, delete, or switch profiles. Each profile has its own receipts, snapshots, timeline, stats, and Reddit export. Profiles are labels only; no USCIS credentials are stored.
+The tracker supports **profiles**, one per USCIS login (for example "Me" and "Spouse"). Use the **USCIS account** bar at the top to create, rename, delete, or switch profiles; with two or more profiles a quick switcher also appears next to the timeline title. Each profile has its own receipts, snapshots, titles, timeline, stats, and Reddit export. Profiles are labels only; no USCIS credentials are stored.
 
-Before opening API tabs for a profile, make sure you are signed in to USCIS as that account. To switch accounts, sign out of USCIS first (there is a link in Step 2). If you paste JSON for a receipt that belongs to another profile, the tracker offers to save it there.
+Before importing for a profile, make sure you are signed in to USCIS as that account. To switch accounts, sign out of USCIS first (there is a link in Step 2). If you paste JSON for a receipt that belongs to another profile, the tracker offers to save it there.
 
 ### Import Everything from Your USCIS Account
 
@@ -99,7 +103,19 @@ Besides the main case endpoint, each receipt has two more USCIS endpoints you ca
 | Case status | `https://my.uscis.gov/account/case-service/api/case_status/<receipt>` | Current status text |
 | Location | `https://my.uscis.gov/secure-messaging/api/case-service/receipt_info/<receipt>` | Service center or field office handling the case (`null` means it is still at the center on your receipt notice) |
 
-Each receipt chip has **Case**, **Status**, and **Location** buttons that open the matching endpoint in a new tab. The paste box auto-detects which endpoint the JSON came from; if it cannot, pick the data type manually. Status and location changes appear on the timeline and on the case cards.
+Hover a receipt chip to reveal its **Case**, **Status**, and **Location** buttons, which open the matching endpoint in a new tab, plus a remove button. The paste box auto-detects which endpoint the JSON came from; if it cannot, pick the data type manually. Status and location changes appear on the timeline and on the case cards. HTML in USCIS status text is shown as plain text, and USCIS's own API wrapper messages are ignored.
+
+### Case Cards, Titles and Completed Cases
+
+Cards are ordered newest receipt first. Click the pencil next to a receipt number to give the case a custom title, shown on the card, on its chip and on every timeline item. Completed cases (USCIS reports `closed: true`) are hidden by default; use **Show completed** in the stats bar to reveal them. Clicking a receipt number on the timeline jumps to its card.
+
+### Backup and Restore
+
+**Backup** (next to "Export for Reddit") downloads a single JSON file with every profile, its receipts, snapshots, titles and settings. **Restore** imports such a file: profiles with the same id are overwritten, new ones are added, and profiles that exist only in this browser are kept. Use it to back up or to move your data to another browser or device.
+
+### Storage
+
+Only the first snapshot of each history is stored whole; later snapshots are stored as the list of changed fields and rebuilt on load, which cuts storage by roughly 80% for typical histories. The USCIS account bar shows total space used against the browser's ~5 MB limit, and the stats bar shows the active profile's share.
 
 ## Understanding Updates
 
@@ -150,7 +166,7 @@ This tracker works with all USCIS forms, including:
 
 - **Pure HTML/CSS/JavaScript** - No frameworks or dependencies
 - **Client-side only** - Zero server communication
-- **localStorage** - All data stored locally in your browser
+- **localStorage** - All data stored locally in your browser, compacted as change lists
 - **Timezone aware** - Automatic ET conversion
 - **Responsive design** - Works on all devices
 - **PWA Ready** - Install as app on mobile/desktop

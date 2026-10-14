@@ -2,6 +2,22 @@
 
 All notable changes to the USCIS Case Tracker will be documented in this file.
 
+## [1.3.0] - 2026-10-14
+
+### Added
+- 💾 Backup and Restore buttons next to "Export for Reddit": move all profiles between browsers or devices as one JSON file
+- 🔀 Account switcher in the timeline header when there is more than one profile
+- 📦 Total storage meter under the USCIS account bar
+- 🪗 "Get Case Data from USCIS" card is collapsible, with Open account / Paste JSON shortcuts when collapsed
+
+### Changed
+- Receipt chips look the same in the open and collapsed states of Step 1; Case / Status / Location and remove buttons appear on hover or keyboard focus (always on touch screens); remove asks for confirmation
+- Custom titles shown on receipt chips; chips ordered newest first like the cards
+- Removed the placeholder "No status available" line from case cards (the Case endpoint carries no status text; the Status row does)
+
+### Fixed
+- Chip actions stayed open after clicking a button
+
 ## [1.2.0] - 2026-10-14
 
 ### Added

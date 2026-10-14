@@ -310,6 +310,27 @@
       padding: var(--space-xl);
     }
 
+    .timeline-profile {
+      margin-left: var(--space-sm);
+      padding: var(--space-xs) var(--space-md);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent);
+      border-color: var(--accent-border);
+      background: var(--accent-light);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .header-actions button {
+      margin-right: 0;
+    }
+
     .export-btn {
       background: var(--accent-light);
       color: var(--accent);
@@ -620,7 +641,6 @@
     .chip-delete {
       padding: var(--space-xs);
       margin: 0;
-      margin-left: var(--space-xs);
       border: none;
       background: transparent;
       color: var(--text-light);
@@ -1510,6 +1530,31 @@
       margin-right: 0;
     }
 
+    .profile-bar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-right: var(--space-xs);
+    }
+
+    .profile-bar-left .profile-bar-label {
+      margin-right: 0;
+      line-height: 1;
+    }
+
+    .profile-bar-storage {
+      font-size: 0.6875rem;
+      line-height: 1;
+      margin-top: -1px;
+      color: var(--muted);
+      white-space: nowrap;
+      cursor: help;
+    }
+
+    .profile-bar-storage.warn {
+      color: var(--error);
+    }
+
     select {
       padding: var(--space-sm) var(--space-md);
       border: 1.5px solid var(--border);
@@ -1535,22 +1580,44 @@
       margin-left: var(--space-xs);
     }
 
-    /* Per-receipt endpoint buttons in the collapsed receipts view */
-    .chip-group {
+    /* Chip actions (Case / Status / Location / remove) appear on hover or focus */
+    .chip-actions {
       display: inline-flex;
       align-items: center;
-      flex-wrap: wrap;
       gap: var(--space-xs);
-      padding: var(--space-xs) var(--space-sm);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-full);
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-width var(--transition-normal), opacity var(--transition-normal);
     }
 
-    .chip-group-name {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text);
-      padding: 0 var(--space-xs);
+    .chip:hover .chip-actions,
+    .chip:focus-visible .chip-actions,
+    .chip:has(:focus-visible) .chip-actions {
+      max-width: 20rem;
+      opacity: 1;
+      overflow: visible;
+    }
+
+    @media (hover: none) {
+      .chip-actions {
+        max-width: 20rem;
+        opacity: 1;
+        overflow: visible;
+      }
+    }
+
+    .chip:focus {
+      outline: none;
+    }
+
+    .chip:focus-visible,
+    .chip:has(:focus-visible) {
+      border-color: var(--accent);
+    }
+
+    #receiptChipsCollapsed {
+      padding: 0;
     }
 
     .quick-link-sm {
@@ -2099,7 +2166,10 @@
   </section>
 
   <div class="profile-bar" role="group" aria-label="USCIS account profile">
-    <label for="profileSelect" class="profile-bar-label">USCIS account</label>
+    <div class="profile-bar-left">
+      <label for="profileSelect" class="profile-bar-label">USCIS account</label>
+      <span class="profile-bar-storage" id="totalStorage"></span>
+    </div>
     <select id="profileSelect" aria-label="Active profile"></select>
     <button type="button" class="btn-compact" onclick="createProfilePrompt()" aria-label="Create a new profile">New</button>
     <button type="button" class="btn-compact" onclick="renameProfilePrompt()" aria-label="Rename the active profile">Rename</button>
@@ -2154,12 +2224,19 @@
     </div>
   </section>
 
-  <section class="card" aria-labelledby="json-title" id="step2Section">
-    <div class="card-header">
+  <section class="card collapsible" aria-labelledby="json-title" id="step2Section">
+    <div class="card-header" onclick="toggleCollapse('step2Section')">
       <div class="step-header">
         <span class="step-indicator" id="step2Indicator">2</span>
         <h2 id="json-title">Get Case Data from USCIS</h2>
       </div>
+      <svg class="collapse-icon icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+    <div class="collapsed-content">
+      <button type="button" class="quick-link" style="border: none; cursor: pointer;" onclick="openUscisAccount()">Open my USCIS account</button>
+      <button type="button" class="quick-link" style="border: none; cursor: pointer;" onclick="expandStep2()">Paste JSON</button>
     </div>
     <div class="card-body">
     <div class="import-box" id="importBox">
@@ -2227,13 +2304,29 @@ After opening a receipt's Case, Status or Location tab, you'll see a page with J
       <div class="step-header">
         <span class="step-indicator" id="step3Indicator">3</span>
         <h2 id="timeline-title">Your Case Timeline</h2>
+        <select id="timelineProfileSelect" class="timeline-profile" aria-label="Switch USCIS account" title="Switch USCIS account" style="display: none;" onchange="setActiveProfile(this.value)"></select>
       </div>
-      <button onclick="exportTimeline()" class="export-btn" aria-label="Export timeline for Reddit" id="exportBtn" style="display: none;">
-        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
-        </svg>
-        Export for Reddit
-      </button>
+      <div class="header-actions">
+        <button onclick="exportTimeline()" class="export-btn" aria-label="Export timeline for Reddit" id="exportBtn" style="display: none;">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+          </svg>
+          Export for Reddit
+        </button>
+        <button onclick="downloadBackup()" class="export-btn" id="backupBtn" aria-label="Download a backup of all profiles" title="Download all profiles, receipts, snapshots and titles as a JSON file. Use it to back up or move your data to another browser or device.">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+          Backup
+        </button>
+        <button onclick="document.getElementById('restoreFile').click()" class="export-btn" id="restoreBtn" aria-label="Restore from a backup file" title="Import a backup file made with the Backup button, on this or another device.">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+          Restore
+        </button>
+        <input type="file" id="restoreFile" accept="application/json,.json" style="display: none;" onchange="restoreBackupFromFile(this)">
+      </div>
     </div>
     <div id="quickStatsBar" class="quick-stats" style="display: none;">
       <div class="quick-stats-items">
@@ -2531,6 +2624,29 @@ function storageBytesFor(pid) {
   const raw = localStorage.getItem("cases:" + pid) || "";
   return new Blob([raw]).size;
 }
+// Everything this site keeps in localStorage (keys and values, all profiles)
+function totalStorageBytes() {
+  let bytes = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    bytes += new Blob([k + (localStorage.getItem(k) || "")]).size;
+  }
+  return bytes;
+}
+function formatBytes(bytes) {
+  const kb = bytes / 1024;
+  return kb < 1024 ? `${Math.round(kb)} KB` : `${(kb / 1024).toFixed(1)} MB`;
+}
+const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024;
+function renderStorageTotal() {
+  const el = document.getElementById("totalStorage");
+  if (!el) return;
+  const bytes = totalStorageBytes();
+  const pct = Math.round(100 * bytes / STORAGE_LIMIT_BYTES);
+  el.textContent = `${formatBytes(bytes)} used (${pct}%)`;
+  el.title = `Space used in this browser by all ${loadProfiles().length} profile(s): ${formatBytes(bytes)} of about 5 MB allowed per site`;
+  el.classList.toggle("warn", pct >= 80);
+}
 
 function loadReceipts() { return loadReceiptsFor(activeProfileId()); }
 function saveReceipts(r) { saveReceiptsFor(activeProfileId(), r); }
@@ -2613,6 +2729,20 @@ function renderProfileBar() {
   document.querySelectorAll(".step2ProfileName").forEach(el => { el.textContent = name || "this profile"; });
   const delBtn = document.getElementById("deleteProfileBtn");
   if (delBtn) delBtn.disabled = profiles.length <= 1;
+  // Quick switcher in the timeline header, only when there is something to switch between
+  const quick = document.getElementById("timelineProfileSelect");
+  if (quick) {
+    quick.innerHTML = "";
+    profiles.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = p.name;
+      if (p.id === active) opt.selected = true;
+      quick.appendChild(opt);
+    });
+    quick.style.display = profiles.length > 1 ? "inline-block" : "none";
+  }
+  renderStorageTotal();
 }
 function promptProfileName(initial) {
   const name = prompt('Profile name (a label for this USCIS account, e.g. "Me" or "Spouse"):', initial || "");
@@ -2643,7 +2773,7 @@ function deleteProfilePrompt() {
   renderProfileBar();
   refreshAll();
 }
-function refreshAll() { renderReceipts(); renderTimeline(); updateProgress(); }
+function refreshAll() { renderReceipts(); renderTimeline(); updateProgress(); renderStorageTotal(); }
 
 // ---- completed cases are hidden by default ----
 function showCompleted() { return localStorage.getItem("showCompleted") === "1"; }
@@ -2796,6 +2926,9 @@ function updateProgress() {
     if (savedStates.receiptsSection === undefined && receiptsSection && !receiptsSection.classList.contains('collapsed')) {
       receiptsSection.classList.add('collapsed');
     }
+    if (savedStates.step2Section === undefined && step2Section && !step2Section.classList.contains('collapsed')) {
+      step2Section.classList.add('collapsed');
+    }
 
     // Show FAB and quick stats
     const fab = document.getElementById('fabAddCase');
@@ -2848,7 +2981,7 @@ function updateQuickStats(cases) {
   document.getElementById('statInProgress').textContent = inProgress;
   document.getElementById('statTotalUpdates').textContent = totalUpdates;
   const storageEl = document.getElementById('statStorage');
-  if (storageEl) { const kb = storageBytesFor(activeProfileId()) / 1024; storageEl.textContent = kb < 1024 ? `${Math.round(kb)} KB` : `${(kb / 1024).toFixed(1)} MB`; }
+  if (storageEl) storageEl.textContent = formatBytes(storageBytesFor(activeProfileId()));
 }
 
 // render receipts
@@ -2860,13 +2993,16 @@ function renderReceipts() {
   collapsedCont.innerHTML = "";
 
   const titles = caseTitles();
-  sortedReceipts().forEach(r => {
-    // Render for expanded view
+  // One chip design for both the expanded list and the collapsed header. The endpoint buttons
+  // and the remove button appear on hover / keyboard focus (always on touch screens).
+  const buildChip = (r) => {
     const chip = document.createElement("div");
     chip.className = "chip";
     chip.setAttribute("role", "listitem");
+    chip.tabIndex = 0;
 
     const text = document.createElement("span");
+    text.className = "chip-name";
     text.textContent = r;
     chip.appendChild(text);
     if (titles[r]) {
@@ -2876,42 +3012,45 @@ function renderReceipts() {
       chip.appendChild(t);
     }
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "chip-delete";
-    deleteBtn.setAttribute("aria-label", `Remove receipt ${r}`);
-    deleteBtn.innerHTML = `
-      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-      </svg>
-    `;
-    deleteBtn.onclick = () => {
-      const arr = loadReceipts().filter(x => x !== r);
-      saveReceipts(arr);
-      renderReceipts();
-      updateProgress();
-    };
-    chip.appendChild(deleteBtn);
-    cont.appendChild(chip);
-
-    // Render for collapsed view: one button per USCIS endpoint
-    const group = document.createElement("div");
-    group.className = "chip-group";
-    group.setAttribute("role", "group");
-    group.setAttribute("aria-label", `Open API tabs for ${r}`);
-    const name = document.createElement("span");
-    name.className = "chip-group-name";
-    name.textContent = titles[r] ? `${r} · ${titles[r]}` : r;
-    group.appendChild(name);
+    const actions = document.createElement("span");
+    actions.className = "chip-actions";
+    actions.setAttribute("role", "group");
+    actions.setAttribute("aria-label", `Actions for ${r}`);
     Object.entries(ENDPOINTS).forEach(([kind, ep]) => {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "quick-link quick-link-sm";
       b.textContent = ep.label;
       b.setAttribute("aria-label", `Open ${ep.label} API tab for ${r}`);
-      b.onclick = () => openSingleApiTab(r, kind);
-      group.appendChild(b);
+      b.onclick = (e) => { e.stopPropagation(); e.currentTarget.blur(); openSingleApiTab(r, kind); };
+      actions.appendChild(b);
     });
-    collapsedCont.appendChild(group);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "chip-delete";
+    deleteBtn.setAttribute("aria-label", `Remove receipt ${r}`);
+    deleteBtn.title = "Remove receipt";
+    deleteBtn.innerHTML = `
+      <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    `;
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (!confirm(`Remove receipt ${r} from this profile? Its saved snapshots are kept until you clear data.`)) return;
+      saveReceipts(loadReceipts().filter(x => x !== r));
+      renderReceipts();
+      updateProgress();
+    };
+    actions.appendChild(deleteBtn);
+    chip.appendChild(actions);
+    return chip;
+  };
+
+  sortedReceipts().forEach(r => {
+    cont.appendChild(buildChip(r));
+    collapsedCont.appendChild(buildChip(r));
   });
 
   updateProgress();
@@ -3276,6 +3415,7 @@ function addCaseFromModal() {
   closeAddCaseModal();
 
   // Scroll to paste JSON section
+  expandStep2(false);
   document.getElementById("step2Section").scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -3715,6 +3855,84 @@ document.getElementById("saveJsonBtn").onclick = () => {
   }, 2000);
 };
 
+// ---- Backup / restore: move all profiles between browsers or devices ----
+const BACKUP_KEYS = ["showCompleted", "collapsedSections"];
+function buildBackup() {
+  const profiles = loadProfiles();
+  const backup = { uscisTrackerBackup: 1, exportedAt: new Date().toISOString(), activeProfileId: activeProfileId(), profiles, receipts: {}, cases: {}, settings: {} };
+  profiles.forEach(p => {
+    backup.receipts[p.id] = loadReceiptsFor(p.id);
+    backup.cases[p.id] = readJSON("cases:" + p.id, {});   // stored (compact) form; expands on load
+  });
+  BACKUP_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) backup.settings[k] = v; });
+  return backup;
+}
+function isBackup(obj) {
+  return !!obj && typeof obj === "object" && obj.uscisTrackerBackup === 1 && Array.isArray(obj.profiles) && obj.receipts && obj.cases;
+}
+function downloadBackup() {
+  const json = JSON.stringify(buildBackup());
+  const blob = new Blob([json], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `uscis-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+// Restore: profiles with the same id are overwritten, others are added; local profiles missing
+// from the backup are kept. Returns { added, replaced }.
+function restoreBackup(backup) {
+  if (!isBackup(backup)) throw new Error("This is not a USCIS Case Tracker backup file.");
+  const local = loadProfiles();
+  let added = 0, replaced = 0;
+  backup.profiles.forEach(p => {
+    if (!p || typeof p.id !== "string" || typeof p.name !== "string") return;
+    const existing = local.find(x => x.id === p.id);
+    if (existing) { existing.name = p.name; replaced++; }
+    else {
+      let name = p.name;
+      if (local.some(x => x.name === name)) name = `${name} (imported)`;
+      local.push({ id: p.id, name }); added++;
+    }
+    const receipts = Array.isArray(backup.receipts[p.id]) ? backup.receipts[p.id].filter(r => typeof r === "string" && isValidReceipt(r)) : [];
+    const cases = (backup.cases[p.id] && typeof backup.cases[p.id] === "object" && !Array.isArray(backup.cases[p.id])) ? backup.cases[p.id] : {};
+    saveReceiptsFor(p.id, receipts);
+    writeJSON("cases:" + p.id, cases);
+  });
+  saveProfiles(local);
+  if (backup.settings && typeof backup.settings === "object") {
+    BACKUP_KEYS.forEach(k => { if (typeof backup.settings[k] === "string") localStorage.setItem(k, backup.settings[k]); });
+  }
+  if (backup.activeProfileId && local.some(p => p.id === backup.activeProfileId)) localStorage.setItem("activeProfileId", backup.activeProfileId);
+  migrateStorage();
+  return { added, replaced };
+}
+function restoreBackupFromFile(input) {
+  const file = input.files && input.files[0];
+  input.value = "";
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let backup;
+    try { backup = JSON.parse(reader.result); } catch (e) { alert("That file is not valid JSON."); return; }
+    if (!isBackup(backup)) { alert("This is not a USCIS Case Tracker backup file."); return; }
+    const n = backup.profiles.length;
+    const when = backup.exportedAt ? new Date(backup.exportedAt).toLocaleString() : "unknown date";
+    if (!confirm(`Restore ${n} profile(s) from the backup made ${when}?\n\nProfiles with the same id will be overwritten, others will be added. Profiles that exist only in this browser are kept.`)) return;
+    try {
+      const res = restoreBackup(backup);
+      renderProfileBar();
+      refreshAll();
+      initializeCollapsedSections();
+      alert(`Restored: ${res.replaced} profile(s) overwritten, ${res.added} added.`);
+    } catch (e) { alert("Restore failed: " + e.message); }
+  };
+  reader.onerror = () => alert("Could not read that file.");
+  reader.readAsText(file);
+}
+
 // ---- Account import: bookmarklet that runs on my.uscis.gov and sends a bundle back ----
 const USCIS_ORIGIN = "https://my.uscis.gov";
 const USCIS_ACCOUNT_URL = USCIS_ORIGIN + "/account/applicant";
@@ -3757,6 +3975,17 @@ function renderImportBox() {
   };
   const note = document.getElementById("importFileNote");
   if (note) note.style.display = target ? "none" : "block";
+}
+
+function expandStep2(focusPaste = true) {
+  const section = document.getElementById("step2Section");
+  if (section.classList.contains("collapsed")) {
+    section.classList.remove("collapsed");
+    const states = readJSON("collapsedSections", {});
+    states.step2Section = false;
+    writeJSON("collapsedSections", states);
+  }
+  if (focusPaste) setTimeout(() => document.getElementById("jsonText").focus(), 350);
 }
 
 function openUscisAccount() {
@@ -4071,7 +4300,7 @@ function renderCaseSummary() {
           '<span class="status-badge active">● In Progress</span>'
         }
       </div>
-      <div class="case-card-status">${escapeHtml(htmlToText(data.caseStatus) || 'No status available')}</div>
+      ${htmlToText(data.caseStatus) ? `<div class="case-card-status">${escapeHtml(htmlToText(data.caseStatus))}</div>` : ''}
       <div class="case-card-meta">
         ${daysSinceSubmission !== null ? `
           <div class="case-card-meta-item">
@@ -4243,6 +4472,9 @@ function initializeCollapsedSections() {
     }
     if (savedCollapsedStates.receiptsSection === undefined) {
       document.getElementById('receiptsSection').classList.add('collapsed');
+    }
+    if (savedCollapsedStates.step2Section === undefined) {
+      document.getElementById('step2Section').classList.add('collapsed');
     }
   }
 
