@@ -59,7 +59,7 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 
 2. **Get Updates**
    - Log in to [myaccount.uscis.gov](https://myaccount.uscis.gov/sign-in)
-   - Click "Open API tabs" to load case data
+   - Use the "Send cases to tracker" bookmark (see below), or click a receipt's Case / Status / Location button
    - Copy the JSON from each tab
 
 3. **Save Snapshots**
@@ -79,6 +79,16 @@ The tracker supports **profiles**, one per USCIS login (for example "Me" and "Sp
 
 Before opening API tabs for a profile, make sure you are signed in to USCIS as that account. To switch accounts, sign out of USCIS first (there is a link in Step 2). If you paste JSON for a receipt that belongs to another profile, the tracker offers to save it there.
 
+### Import Everything from Your USCIS Account
+
+Browsers block the tracker from reading USCIS pages directly (cross-site access), so the import runs from inside the USCIS tab via a bookmarklet:
+
+1. In Step 2, drag the **Send cases to tracker** button to your bookmarks bar (one time).
+2. Sign in and open [my.uscis.gov/account/applicant](https://my.uscis.gov/account/applicant).
+3. Click the bookmark. It reads every receipt number from the case cards on that page, fetches Case, Status and Location data for each one using your existing session, and opens the tracker with everything imported.
+
+The bookmarklet talks only to `my.uscis.gov` and to the tracker page. If the tracker is opened from a local file, the data is copied to the clipboard instead; paste it into the Step 2 box. The tracker only accepts import messages whose origin is `https://my.uscis.gov`.
+
 ### Case Status and Location Data
 
 Besides the main case endpoint, each receipt has two more USCIS endpoints you can snapshot the same way (open the tab while signed in, copy the JSON, paste it in Step 2):
@@ -89,7 +99,7 @@ Besides the main case endpoint, each receipt has two more USCIS endpoints you ca
 | Case status | `https://my.uscis.gov/account/case-service/api/case_status/<receipt>` | Current status text |
 | Location | `https://my.uscis.gov/secure-messaging/api/case-service/receipt_info/<receipt>` | Service center or field office handling the case (`null` means it is still at the center on your receipt notice) |
 
-Each receipt chip has **Case**, **Status**, and **Location** buttons, and the "Open API tabs" button has a selector for which endpoint (or all three) to open. The paste box auto-detects which endpoint the JSON came from; if it cannot, pick the data type manually. Status and location changes appear on the timeline and on the case cards.
+Each receipt chip has **Case**, **Status**, and **Location** buttons that open the matching endpoint in a new tab. The paste box auto-detects which endpoint the JSON came from; if it cannot, pick the data type manually. Status and location changes appear on the timeline and on the case cards.
 
 ## Understanding Updates
 

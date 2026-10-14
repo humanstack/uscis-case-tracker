@@ -2,16 +2,38 @@
 
 All notable changes to the USCIS Case Tracker will be documented in this file.
 
+## [1.2.0] - 2026-10-14
+
+### Added
+- 📥 One-click account import: a bookmarklet reads all receipts from my.uscis.gov/account/applicant, fetches Case, Status and Location for each and sends the bundle to the tracker (clipboard fallback for local files); bundles can also be pasted into Step 2
+- 🙈 Completed cases are hidden by default, with a "Show completed" toggle
+- 🏷️ Custom case titles, shown after the receipt number on cards, chips and the timeline
+- 🔗 Every timeline item names its receipt; the receipt links to the case card
+- 📅 Receipt date on case cards; cards and chips ordered newest first
+- 💾 Compact storage: later snapshots are stored as change lists, with a Storage figure in the stats bar
+
+### Changed
+- Status and location timeline items are dated from the USCIS payload, never from the import time
+- HTML in USCIS status fields is rendered as plain text; API wrapper messages are ignored
+- Bulk "Open API tabs" removed in favour of the account import; per-receipt buttons remain
+- Smaller header with a single-line tagline
+
+### Fixed
+- "Case completed" items for cases without a top-level updatedAtTimestamp were dated at import time
+- Date group headers were one day early west of UTC
+- Location objects were printed as JSON on the card
+
 ## [1.1.0] - 2026-10-14
 
 ### Added
 - 👥 Profiles: track cases from several USCIS accounts, each with its own receipts, timeline, stats, and export
 - 📍 Location tracking via the `receipt_info` endpoint (service center / field office changes on the timeline and cards)
 - 📝 Case status tracking via the `case_status` endpoint
-- 🔗 Per-receipt Case / Status / Location buttons and an endpoint selector for "Open API tabs"
+- 🔗 Per-receipt Case / Status / Location buttons (the bulk "Open API tabs" button was removed in favour of the account import)
 - 🧭 Auto-detection of which endpoint pasted JSON came from, with a manual override
 - 🚦 Pasting JSON for a receipt owned by another profile offers to file it there
 - 🚪 "Sign out of USCIS" link for switching accounts
+- 📥 One-click account import: a bookmarklet reads all receipts from my.uscis.gov/account/applicant, fetches all three endpoints per case and sends the bundle to the tracker (clipboard fallback for local files); bundles can also be pasted into Step 2
 
 ### Changed
 - "Clear data" now clears only the active profile
