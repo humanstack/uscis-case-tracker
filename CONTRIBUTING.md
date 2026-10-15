@@ -8,7 +8,7 @@ Thank you for considering contributing to the USCIS Case Tracker! This project h
 
 If you find a bug in the USCIS case tracker:
 
-1. Check if the issue already exists in [GitHub Issues](https://github.com/Enase/uscis-case-tracker/issues)
+1. Check if the issue already exists in [GitHub Issues](https://github.com/humanstack/uscis-case-tracker/issues)
 2. If not, create a new issue with:
    - Clear description of the bug
    - Steps to reproduce

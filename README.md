@@ -6,7 +6,7 @@
 
 A free, open-source, privacy-focused USCIS case tracking tool that runs entirely in your browser. Track multiple immigration cases (I-485, I-765, I-131, and more), view unified timelines, and monitor updates without sending any data to external servers.
 
-**🔗 Live Demo:** [https://enase.github.io/uscis-case-tracker/](https://enase.github.io/uscis-case-tracker/)
+**🔗 Live Demo:** [https://humanstack.github.io/uscis-case-tracker/](https://humanstack.github.io/uscis-case-tracker/)
 
 ## Why Use This USCIS Tracker?
 
