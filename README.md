@@ -27,10 +27,13 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 - No tracking, no analytics
 
 ### 📋 Case Management
-- Track multiple USCIS cases
-- Unified timeline across all cases
-- Automatic date grouping
+- Track multiple USCIS cases across several USCIS accounts (profiles)
+- One-click import of every case from your USCIS account page
+- Custom case titles, receipt dates, newest-first ordering
+- Completed cases hidden by default, one click to show them
+- Unified timeline across all cases, every item linked to its case card
 - Receipt number masking for sharing
+- Backup and restore all data as a file to move between browsers or devices
 
 ### 🔍 Smart Insights
 - Identifies system vs. officer updates
@@ -41,14 +44,15 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 ### 📊 Timeline Analysis
 - View JSON data for each update
 - Compare changes between updates
-- Track case progression
-- Monitor status changes
+- Track case progression, status text and service-center transfers
+- Items dated from the USCIS data itself, never from when you imported it
 
 ### 💡 Smart Features
 - Business hours detection
 - Automatic timezone conversion
 - Reddit-friendly export
 - Receipt number validation
+- Compact snapshot storage with a live storage meter
 
 ## How to Use
 
@@ -59,7 +63,7 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
 
 2. **Get Updates**
    - Log in to [myaccount.uscis.gov](https://myaccount.uscis.gov/sign-in)
-   - Click "Open API tabs" to load case data
+   - Use the "Send cases to tracker" bookmark (see below), or click a receipt's Case / Status / Location button
    - Copy the JSON from each tab
 
 3. **Save Snapshots**
@@ -72,6 +76,46 @@ A free, open-source, privacy-focused USCIS case tracking tool that runs entirely
    - Track officer interactions (👋)
    - Monitor system updates (⚙️)
    - Celebrate completions (🎉)
+
+### Multiple USCIS Accounts
+
+The tracker supports **profiles**, one per USCIS login (for example "Me" and "Spouse"). Use the **USCIS account** bar at the top to create, rename, delete, or switch profiles; with two or more profiles a quick switcher also appears next to the timeline title. Each profile has its own receipts, snapshots, titles, timeline, stats, and Reddit export. Profiles are labels only; no USCIS credentials are stored.
+
+Before importing for a profile, make sure you are signed in to USCIS as that account. To switch accounts, sign out of USCIS first (there is a link in Step 2). If you paste JSON for a receipt that belongs to another profile, the tracker offers to save it there.
+
+### Import Everything from Your USCIS Account
+
+Browsers block the tracker from reading USCIS pages directly (cross-site access), so the import runs from inside the USCIS tab via a bookmarklet:
+
+1. In Step 2, drag the **Send cases to tracker** button to your bookmarks bar (one time).
+2. Sign in and open [my.uscis.gov/account/applicant](https://my.uscis.gov/account/applicant).
+3. Click the bookmark. It reads every receipt number from the case cards on that page, fetches Case, Status and Location data for each one using your existing session, and opens the tracker with everything imported.
+
+The bookmarklet talks only to `my.uscis.gov` and to the tracker page. If the tracker is opened from a local file, the data is copied to the clipboard instead; paste it into the Step 2 box. The tracker only accepts import messages whose origin is `https://my.uscis.gov`.
+
+### Case Status and Location Data
+
+Besides the main case endpoint, each receipt has two more USCIS endpoints you can snapshot the same way (open the tab while signed in, copy the JSON, paste it in Step 2):
+
+| Data | URL pattern | What it shows |
+|------|-------------|---------------|
+| Case data | `https://my.uscis.gov/account/case-service/api/cases/<receipt>` | Events, notices, timestamps |
+| Case status | `https://my.uscis.gov/account/case-service/api/case_status/<receipt>` | Current status text |
+| Location | `https://my.uscis.gov/secure-messaging/api/case-service/receipt_info/<receipt>` | Service center or field office handling the case (`null` means it is still at the center on your receipt notice) |
+
+Hover a receipt chip to reveal its **Case**, **Status**, and **Location** buttons, which open the matching endpoint in a new tab, plus a remove button. The paste box auto-detects which endpoint the JSON came from; if it cannot, pick the data type manually. Status and location changes appear on the timeline and on the case cards. HTML in USCIS status text is shown as plain text, and USCIS's own API wrapper messages are ignored.
+
+### Case Cards, Titles and Completed Cases
+
+Cards are ordered newest receipt first. Click the pencil next to a receipt number to give the case a custom title, shown on the card, on its chip and on every timeline item. Completed cases (USCIS reports `closed: true`) are hidden by default; use **Show completed** in the stats bar to reveal them. Clicking a receipt number on the timeline jumps to its card.
+
+### Backup and Restore
+
+**Backup** (next to "Export for Reddit") downloads a single JSON file with every profile, its receipts, snapshots, titles and settings. **Restore** imports such a file: profiles with the same id are overwritten, new ones are added, and profiles that exist only in this browser are kept. Use it to back up or to move your data to another browser or device.
+
+### Storage
+
+Only the first snapshot of each history is stored whole; later snapshots are stored as the list of changed fields and rebuilt on load, which cuts storage by roughly 80% for typical histories. The USCIS account bar shows total space used against the browser's ~5 MB limit, and the stats bar shows the active profile's share.
 
 ## Understanding Updates
 
@@ -122,7 +166,7 @@ This tracker works with all USCIS forms, including:
 
 - **Pure HTML/CSS/JavaScript** - No frameworks or dependencies
 - **Client-side only** - Zero server communication
-- **localStorage** - All data stored locally in your browser
+- **localStorage** - All data stored locally in your browser, compacted as change lists
 - **Timezone aware** - Automatic ET conversion
 - **Responsive design** - Works on all devices
 - **PWA Ready** - Install as app on mobile/desktop

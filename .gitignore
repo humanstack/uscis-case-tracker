@@ -1,0 +1,14 @@
+# IDEs
+.idea/
+.vscode/
+.nvim/
+.luarc.json
+.cursor/
+
+# Platform specific
+.DS_Store
+
+# Claude Code
+.claude/
+CLAUDE.local.md
+
