@@ -1799,6 +1799,10 @@
     }
 
     /* Add case modal */
+    #profileModal .modal-content {
+      max-width: 28rem;
+    }
+
     #addCaseModal .modal-content {
       max-width: 36rem;
     }
@@ -2178,8 +2182,8 @@
       <span class="profile-bar-storage" id="totalStorage"></span>
     </div>
     <select id="profileSelect" aria-label="Active profile"></select>
-    <button type="button" class="btn-compact" onclick="createProfilePrompt()" aria-label="Create a new profile">New</button>
-    <button type="button" class="btn-compact" onclick="renameProfilePrompt()" aria-label="Rename the active profile">Rename</button>
+    <button type="button" class="btn-compact" onclick="openProfileModal('new')" aria-label="Create a new profile">New</button>
+    <button type="button" class="btn-compact" onclick="openProfileModal('update')" aria-label="Update the active profile">Update</button>
     <button type="button" class="btn-compact" id="deleteProfileBtn" onclick="deleteProfilePrompt()" aria-label="Delete the active profile" style="border-color: var(--error-border); color: var(--error);">Delete</button>
   </div>
 
@@ -2429,6 +2433,36 @@ After opening a receipt's Case, Status or Location tab, you'll see a page with J
     <div class="modal-body">
       <p class="export-info">This is how your timeline will appear on Reddit. Receipt numbers are masked for privacy.</p>
       <pre id="exportPreview" class="export-preview"></pre>
+    </div>
+  </div>
+</div>
+
+<div id="profileModal" class="modal" role="dialog" aria-labelledby="profile-modal-title" aria-modal="true">
+  <div class="modal-content profile-modal-content">
+    <div class="modal-header">
+      <h3 id="profile-modal-title">New USCIS account</h3>
+      <button class="modal-close" onclick="closeProfileModal()" aria-label="Close modal">
+        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form class="add-case-form" id="profileForm" onsubmit="saveProfileModal(); return false;" novalidate>
+        <div class="input-group">
+          <label for="profileTitleInput">Title</label>
+          <input id="profileTitleInput" type="text" maxlength="40" placeholder='e.g. "Me" or "Spouse"' autocomplete="off" required>
+        </div>
+        <div class="input-group">
+          <label for="profileEmailInput">USCIS login email</label>
+          <input id="profileEmailInput" type="email" placeholder="name@example.com" autocomplete="off" spellcheck="false">
+          <span class="hint">Optional. The email you use to sign in to this USCIS account.</span>
+        </div>
+        <div class="form-actions">
+          <button type="button" onclick="closeProfileModal()">Cancel</button>
+          <button type="submit" class="primary" id="profileSaveBtn">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -2686,6 +2720,17 @@ function setActiveProfile(id) {
   renderProfileBar();
   refreshAll();
 }
+function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function setProfileEmail(id, email) {
+  const profiles = loadProfiles();
+  const p = profiles.find(x => x.id === id);
+  if (!p) return false;
+  const v = String(email || "").trim().toLowerCase();
+  if (v && !isValidEmail(v)) return false;
+  if (v) p.email = v; else delete p.email;
+  saveProfiles(profiles);
+  return true;
+}
 function createProfile(name) {
   const profiles = loadProfiles();
   const id = newProfileId();
@@ -2726,7 +2771,7 @@ function renderProfileBar() {
   profiles.forEach(p => {
     const opt = document.createElement("option");
     opt.value = p.id;
-    opt.textContent = p.name;
+    opt.textContent = p.email ? `${p.name} (${p.email})` : p.name;
     if (p.id === active) opt.selected = true;
     select.appendChild(opt);
   });
@@ -2751,26 +2796,50 @@ function renderProfileBar() {
   }
   renderStorageTotal();
 }
-function promptProfileName(initial) {
-  const name = prompt('Profile name (a label for this USCIS account, e.g. "Me" or "Spouse"):', initial || "");
-  if (name === null) return null;
-  const trimmed = name.trim();
-  if (!trimmed) { alert("Profile name cannot be empty."); return null; }
-  return trimmed.slice(0, 40);
+// New / Update dialog with Title and Email fields
+let profileModalMode = "new";
+function openProfileModal(mode) {
+  profileModalMode = mode === "update" ? "update" : "new";
+  const p = profileModalMode === "update" ? activeProfile() : null;
+  if (profileModalMode === "update" && !p) return;
+  document.getElementById("profile-modal-title").textContent = p ? "Update USCIS account" : "New USCIS account";
+  const title = document.getElementById("profileTitleInput");
+  const email = document.getElementById("profileEmailInput");
+  title.value = p ? p.name : "";
+  email.value = p ? (p.email || "") : "";
+  [title, email].forEach(el => el.setCustomValidity(""));
+  document.getElementById("profileModal").style.display = "block";
+  document.body.style.overflow = "hidden";
+  setTimeout(() => title.focus(), 50);
 }
-function createProfilePrompt() {
-  const name = promptProfileName("");
-  if (!name) return;
-  setActiveProfile(createProfile(name));
+function closeProfileModal() {
+  document.getElementById("profileModal").style.display = "none";
+  document.body.style.overflow = "";
 }
-function renameProfilePrompt() {
-  const p = activeProfile();
-  if (!p) return;
-  const name = promptProfileName(p.name);
-  if (!name) return;
-  renameProfile(p.id, name);
-  renderProfileBar();
+function saveProfileModal() {
+  const titleEl = document.getElementById("profileTitleInput");
+  const emailEl = document.getElementById("profileEmailInput");
+  const name = titleEl.value.trim().slice(0, 40);
+  const email = emailEl.value.trim();
+  titleEl.setCustomValidity(name ? "" : "Title cannot be empty");
+  emailEl.setCustomValidity(!email || isValidEmail(email) ? "" : "Enter a valid email address");
+  if (!name) { titleEl.reportValidity(); return false; }
+  if (email && !isValidEmail(email)) { emailEl.reportValidity(); return false; }
+  if (profileModalMode === "update") {
+    const id = activeProfileId();
+    renameProfile(id, name);
+    setProfileEmail(id, email);
+    closeProfileModal();
+    renderProfileBar();
+  } else {
+    const id = createProfile(name);
+    setProfileEmail(id, email);
+    closeProfileModal();
+    setActiveProfile(id);
+  }
+  return true;
 }
+document.getElementById("profileModal").onclick = (e) => { if (e.target === e.currentTarget) closeProfileModal(); };
 function deleteProfilePrompt() {
   const p = activeProfile();
   if (!p) return;
@@ -3365,6 +3434,9 @@ document.addEventListener("keydown", (e) => {
     if (document.getElementById("exportModal").style.display === "block") {
       closeExportModal();
     }
+    if (document.getElementById("profileModal").style.display === "block") {
+      closeProfileModal();
+    }
     if (document.getElementById("addCaseModal").style.display === "block") {
       closeAddCaseModal();
     }
@@ -3731,8 +3803,7 @@ function importSnapshot(kind, payload, receipt, pid) {
 function isTrackerBundle(obj) {
   return !!obj && typeof obj === "object" && obj.uscisTrackerBundle === 1 && Array.isArray(obj.cases);
 }
-function importBundle(bundle) {
-  const pid = activeProfileId();
+function importBundle(bundle, pid = activeProfileId()) {
   const counts = { saved: 0, unchanged: 0, error: 0, receipts: 0 };
   const errors = [];
   bundle.cases.forEach(entry => {
@@ -3896,12 +3967,16 @@ function restoreBackup(backup) {
   let added = 0, replaced = 0;
   backup.profiles.forEach(p => {
     if (!p || typeof p.id !== "string" || typeof p.name !== "string") return;
+    const email = typeof p.email === "string" && isValidEmail(p.email.trim()) ? p.email.trim().toLowerCase() : "";
     const existing = local.find(x => x.id === p.id);
-    if (existing) { existing.name = p.name; replaced++; }
-    else {
+    if (existing) {
+      existing.name = p.name;
+      if (email) existing.email = email; else delete existing.email;
+      replaced++;
+    } else {
       let name = p.name;
       if (local.some(x => x.name === name)) name = `${name} (imported)`;
-      local.push({ id: p.id, name }); added++;
+      local.push(email ? { id: p.id, name, email } : { id: p.id, name }); added++;
     }
     const receipts = Array.isArray(backup.receipts[p.id]) ? backup.receipts[p.id].filter(r => typeof r === "string" && isValidReceipt(r)) : [];
     const cases = (backup.cases[p.id] && typeof backup.cases[p.id] === "object" && !Array.isArray(backup.cases[p.id])) ? backup.cases[p.id] : {};
@@ -4499,6 +4574,7 @@ renderProfileBar();
 renderImportBox();
 startImportHandshake();
 document.getElementById("profileSelect").onchange = e => setActiveProfile(e.target.value);
+
 refreshAll();
 initializeCollapsedSections();
 </script>

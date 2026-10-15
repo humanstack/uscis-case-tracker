@@ -19,6 +19,7 @@ All notable changes to the USCIS Case Tracker will be documented in this file.
 - 💾 Backup and Restore buttons next to "Export for Reddit": move all profiles between browsers or devices as one JSON file
 - 📦 Compact storage: later snapshots are stored as change lists; storage meters under the USCIS account bar and in the stats bar
 - 🪗 "Get Case Data from USCIS" card is collapsible, with Open account / Paste JSON shortcuts when collapsed
+- ✉️ Each USCIS account can store its login email; New and Update open a dialog with Title and Email fields, and the account dropdown shows the email
 
 ### Changed
 - Existing data is migrated into a "Default" profile automatically; "Clear data" clears only the active profile
@@ -28,6 +29,7 @@ All notable changes to the USCIS Case Tracker will be documented in this file.
 - Bulk "Open API tabs" removed in favour of the account import
 - Removed the placeholder "No status available" line from case cards (the Case endpoint carries no status text; the Status row does)
 - Smaller header with a single-line tagline; footer is a single row of four columns
+- The account bar's "Rename" button is now "Update"
 
 ### Fixed
 - Timeline crashed when rendering again after the empty state (first paste required a reload)
@@ -37,6 +39,7 @@ All notable changes to the USCIS Case Tracker will be documented in this file.
 - Corrupted localStorage entries no longer break page load
 - Pasted USCIS text is HTML-escaped in the timeline and cards; "View JSON" works when values contain apostrophes
 - Chip actions stayed open after clicking a button
+- Restore dropped each account's login email
 
 ## [1.0.0] - 2026-01-23
 
